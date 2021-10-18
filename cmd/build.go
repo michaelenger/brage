@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/michaelenger/brage/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -19,13 +20,13 @@ var buildCmd = &cobra.Command{
 		if len(args) > 0 {
 			path = args[0]
 		} else {
-			path = "CURRENT DIR"
+			path = "."
 		}
 		if outputPath == "" {
 			outputPath = "./build"
 		}
 
-		fmt.Printf("TODO: Build %v to %v\n", path, outputPath)
+		fmt.Printf("TODO: Build %v to %v\n", utils.AbsolutePath(path), utils.AbsolutePath(outputPath))
 	},
 }
 

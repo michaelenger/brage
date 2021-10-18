@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/michaelenger/brage/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -19,10 +20,10 @@ var serveCmd = &cobra.Command{
 		if len(args) > 0 {
 			path = args[0]
 		} else {
-			path = "CURRENT DIR"
+			path = "."
 		}
 
-		fmt.Printf("TODO: Serve %v on localhost:%v\n", path, port)
+		fmt.Printf("TODO: Serve %v on localhost:%v\n", utils.AbsolutePath(path), port)
 	},
 }
 
