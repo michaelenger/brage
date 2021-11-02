@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/michaelenger/brage/site"
 	"github.com/michaelenger/brage/utils"
 	"github.com/spf13/cobra"
 )
@@ -27,6 +28,8 @@ var buildCmd = &cobra.Command{
 		}
 
 		fmt.Printf("TODO: Build %v to %v\n", utils.AbsolutePath(path), utils.AbsolutePath(outputPath))
+		conf, err := site.Load(utils.AbsolutePath(path))
+		fmt.Printf("%v or %v", conf, err)
 	},
 }
 
