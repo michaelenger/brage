@@ -57,3 +57,26 @@ func ListPages(dirPath string, prefixPath string) (map[string]string, error) {
 
 	return pages, nil
 }
+
+// Write the contents of the string to a file.
+func WriteFile(filePath string, contents string) error {
+	targetDirectory := path.Dir(filePath)
+	if _, err := os.Stat(targetDirectory); os.IsNotExist(err) {
+		if err = os.MkdirAll(targetDirectory, 0755); err != nil {
+			return err
+		}
+	}
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(contents)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -5,6 +5,8 @@ import (
 	"path"
 	"regexp"
 	"testing"
+
+	"github.com/michaelenger/brage/utils"
 )
 
 var testConfig = SiteConfig{
@@ -21,21 +23,6 @@ var testConfig = SiteConfig{
 
 var whitespacePattern = regexp.MustCompile(`\s`)
 
-func makeTempFile(filePath string, contents string) error {
-	file, err := os.Create(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(contents)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func TestPageRender(t *testing.T) {
 	temporaryDirectory, err := os.MkdirTemp("", "examplesite")
 	if err != nil {
@@ -49,7 +36,7 @@ func TestPageRender(t *testing.T) {
 		{{ .Content }}
 		</body>`
 	layoutFilePath := path.Join(temporaryDirectory, "layout.html")
-	if err := makeTempFile(layoutFilePath, layoutTemplate); err != nil {
+	if err := utils.WriteFile(layoutFilePath, layoutTemplate); err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
@@ -58,7 +45,7 @@ func TestPageRender(t *testing.T) {
 			<p>{{ . }}</p>
 		{{ end }}`
 	pageFilePath := path.Join(temporaryDirectory, "page.html")
-	if err := makeTempFile(pageFilePath, pageTemplate); err != nil {
+	if err := utils.WriteFile(pageFilePath, pageTemplate); err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 

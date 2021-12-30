@@ -1,7 +1,8 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
+	"path"
 
 	"github.com/michaelenger/brage/site"
 	"github.com/michaelenger/brage/utils"
@@ -9,7 +10,7 @@ import (
 )
 
 // Path to send build files to
-var outputPath string
+var destinationPath string
 
 var buildCmd = &cobra.Command{
 	Use:   "build [PATH]",
@@ -17,24 +18,46 @@ var buildCmd = &cobra.Command{
 	Long:  "Build the site",
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var path string
+		logger := log.Default()
+
+		var sourcePath string
 		if len(args) > 0 {
-			path = args[0]
+			sourcePath = args[0]
 		} else {
-			path = "."
+			sourcePath = "."
 		}
-		if outputPath == "" {
-			outputPath = "./build"
+		if destinationPath == "" {
+			destinationPath = path.Join(sourcePath, "build")
 		}
 
-		fmt.Printf("TODO: Build %v to %v\n", utils.AbsolutePath(path), utils.AbsolutePath(outputPath))
-		conf, err := site.LoadSite(utils.AbsolutePath(path))
-		fmt.Printf("%+v or %v", conf, err)
+		sourcePath = utils.AbsolutePath(sourcePath)
+		destinationPath = utils.AbsolutePath(destinationPath)
+
+		logger.Printf("Loading site from: %v", sourcePath)
+
+		site, err := site.LoadSite(sourcePath)
+		if err != nil {
+			logger.Fatalf("Unable to load site: %v", err)
+		}
+
+		logger.Printf("Building site in: %v", destinationPath)
+
+		// TODO: copy assets
+
+		for _, page := range site.Pages {
+			filePath := path.Join(destinationPath, page.Path, "index.html")
+			content, err := page.Render(site)
+			if err != nil {
+				logger.Fatalf("Unable to render page file: %v", err)
+			}
+			utils.WriteFile(filePath, content)
+			logger.Printf("Wrote file for: %v", page.Path)
+		}
 	},
 }
 
 func init() {
-	buildCmd.Flags().StringVarP(&outputPath, "output", "o", "", "Directory to output files to")
+	buildCmd.Flags().StringVarP(&destinationPath, "output", "o", "", "Directory to output files to")
 
 	rootCmd.AddCommand(buildCmd)
 }
