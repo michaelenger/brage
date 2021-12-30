@@ -84,26 +84,26 @@ func TestLoad(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	if config.Title != "Young Fatigue" {
-		t.Fatalf("Incorrect config.Title: %v", config.Title)
+	if config.Config.Title != "Young Fatigue" {
+		t.Fatalf("Incorrect config.Config.Title: %v", config.Config.Title)
 	}
-	if config.Description != "New Single ‘Dislocation‘ Out Now!" {
-		t.Fatalf("Incorrect config.Description: %v", config.Description)
+	if config.Config.Description != "New Single ‘Dislocation‘ Out Now!" {
+		t.Fatalf("Incorrect config.Config.Description: %v", config.Config.Description)
 	}
-	if config.Image != "icon.png" {
-		t.Fatalf("Incorrect config.Image: %v", config.Image)
+	if config.Config.Image != "icon.png" {
+		t.Fatalf("Incorrect config.Config.Image: %v", config.Config.Image)
 	}
-	if config.RootUrl != "https://youngfatigue.com/" {
-		t.Fatalf("Incorrect config.RootUrl: %v", config.RootUrl)
+	if config.Config.RootUrl != "https://youngfatigue.com/" {
+		t.Fatalf("Incorrect config.Config.RootUrl: %v", config.Config.RootUrl)
 	}
 	if config.Path != dirPath {
 		t.Fatalf("Incorrect config.Path: %v", config.Path)
 	}
+	if config.Config.Data["instagram"] != "https://www.instagram.com/youngfatigue/" {
+		t.Fatalf("Incorrect config.Config.Data: %v", config.Config.Data)
+	}
 	if len(config.Pages) != 4 {
 		t.Fatalf("Incorrect config.Pages: %v", config.Pages)
-	}
-	if config.Data["instagram"] != "https://www.instagram.com/youngfatigue/" {
-		t.Fatalf("Incorrect config.Data: %v", config.Data)
 	}
 }
 

@@ -29,7 +29,7 @@ var buildCmd = &cobra.Command{
 
 		fmt.Printf("TODO: Build %v to %v\n", utils.AbsolutePath(path), utils.AbsolutePath(outputPath))
 		conf, err := site.Load(utils.AbsolutePath(path))
-		fmt.Printf("%v or %v", conf, err)
+		fmt.Printf("%+v or %v", conf, err)
 	},
 }
 

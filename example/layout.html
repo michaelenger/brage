@@ -3,31 +3,31 @@
     <head>
         <meta charset="utf-8">
         <meta content="ie=edge" http-equiv="x-ua-compatible">
-        <meta name="description" content="{{ site.description }}">
+        <meta name="description" content="{{ .Description }}">
 
-        <meta property="og:title" content="{{ site.title }}">
-        <meta property="og:description" content="{{ site.description }}">
+        <meta property="og:title" content="{{ .Title }}">
+        <meta property="og:description" content="{{ .Description }}">
         <meta property="og:url" content="https://youngfatigue.com/">
-        <meta property="og:image" content="https://youngfatigue.com/assets/{{ site.image }}">
-        <meta property="og:image:secure_url" content="https://youngfatigue.com/assets/{{ site.image }}">
+        <meta property="og:image" content="https://youngfatigue.com/assets/{{ .Image }}">
+        <meta property="og:image:secure_url" content="https://youngfatigue.com/assets/{{ .Image }}">
         <meta property="og:image:height" content="800">
         <meta property="og:image:type" content="image/jpg">
         <meta property="og:image:width" content="800">
         <meta property="og:locale" content="en_GB">
-        <meta property="og:site_name" content="{{ site.title }}">
+        <meta property="og:site_name" content="{{ .Title }}">
         <meta property="og:type" content="profile">
 
-        <meta name="twitter:title" content="{{ site.title }}">
-        <meta name="twitter:description" content="{{ site.description }}">
-        <meta name="twitter:image" content="https://youngfatigue.com/assets/{{ site.image }}">
+        <meta name="twitter:title" content="{{ .Title }}">
+        <meta name="twitter:description" content="{{ .Description }}">
+        <meta name="twitter:image" content="https://youngfatigue.com/assets/{{ .Image }}">
         <meta name="twitter:card" content="summary">
 
-        <title>{{ site.title }}</title>
+        <title>{{ .Title }}</title>
 
         <link rel="stylesheet" type="text/css" href="/assets/styles.css">
-        <link rel="shortcut icon" href="/assets/{{ site.image }}">
+        <link rel="shortcut icon" href="/assets/{{ .Image }}">
     </head>
     <body>
-        {{ page.content }}
+        {{ .Content }}
     </body>
 </html>
