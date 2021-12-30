@@ -21,9 +21,9 @@ type SiteConfig struct {
 }
 
 type SiteDescription struct {
-	Config SiteConfig
-	Path   string
-	Pages  []string
+	Config          SiteConfig
+	SourceDirectory string
+	Pages           []Page
 }
 
 // Recursively build a list of pages.
@@ -62,19 +62,19 @@ func listPages(dirPath string, prefixPath string) ([]string, error) {
 }
 
 // Load the site config based on a specified path and build the site description.
-func Load(sitePath string) (SiteDescription, error) {
+func LoadSite(siteDirectory string) (SiteDescription, error) {
 	var description SiteDescription
 
-	if _, err := os.Stat(sitePath); os.IsNotExist(err) {
-		return description, fmt.Errorf("No site found at specified path: %v", sitePath)
+	if _, err := os.Stat(siteDirectory); os.IsNotExist(err) {
+		return description, fmt.Errorf("No site found at specified path: %v", siteDirectory)
 	}
 
-	configPath := path.Join(sitePath, "config.yaml")
+	configPath := path.Join(siteDirectory, "config.yaml")
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return description, fmt.Errorf("No site config found at specified path: %v", configPath)
 	}
 
-	pagesPath := path.Join(sitePath, "pages")
+	pagesPath := path.Join(siteDirectory, "pages")
 	if _, err := os.Stat(pagesPath); os.IsNotExist(err) {
 		return description, fmt.Errorf("No pages found at specified path: %v", pagesPath)
 	}
@@ -84,9 +84,9 @@ func Load(sitePath string) (SiteDescription, error) {
 		return description, err
 	}
 
-	description.Path = sitePath
-	for k := range pages {
-		description.Pages = append(description.Pages, k)
+	description.SourceDirectory = siteDirectory
+	for k, v := range pages {
+		description.Pages = append(description.Pages, Page{k, v})
 	}
 
 	contents, err := os.ReadFile(configPath)

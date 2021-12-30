@@ -72,75 +72,75 @@ func createExampleSite() (string, error) {
 	return temporaryDirectory, nil
 }
 
-func TestLoad(t *testing.T) {
+func TestLoadSite(t *testing.T) {
 	dirPath, err := createExampleSite()
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
 	defer os.RemoveAll(dirPath)
 
-	config, err := Load(dirPath)
+	site, err := LoadSite(dirPath)
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	if config.Config.Title != "Young Fatigue" {
-		t.Fatalf("Incorrect config.Config.Title: %v", config.Config.Title)
+	if site.Config.Title != "Young Fatigue" {
+		t.Fatalf("Incorrect site.Config.Title: %v", site.Config.Title)
 	}
-	if config.Config.Description != "New Single ‘Dislocation‘ Out Now!" {
-		t.Fatalf("Incorrect config.Config.Description: %v", config.Config.Description)
+	if site.Config.Description != "New Single ‘Dislocation‘ Out Now!" {
+		t.Fatalf("Incorrect site.Config.Description: %v", site.Config.Description)
 	}
-	if config.Config.Image != "icon.png" {
-		t.Fatalf("Incorrect config.Config.Image: %v", config.Config.Image)
+	if site.Config.Image != "icon.png" {
+		t.Fatalf("Incorrect site.Config.Image: %v", site.Config.Image)
 	}
-	if config.Config.RootUrl != "https://youngfatigue.com/" {
-		t.Fatalf("Incorrect config.Config.RootUrl: %v", config.Config.RootUrl)
+	if site.Config.RootUrl != "https://youngfatigue.com/" {
+		t.Fatalf("Incorrect site.Config.RootUrl: %v", site.Config.RootUrl)
 	}
-	if config.Path != dirPath {
-		t.Fatalf("Incorrect config.Path: %v", config.Path)
+	if site.SourceDirectory != dirPath {
+		t.Fatalf("Incorrect site.SourceDirectory: %v", site.SourceDirectory)
 	}
-	if config.Config.Data["instagram"] != "https://www.instagram.com/youngfatigue/" {
-		t.Fatalf("Incorrect config.Config.Data: %v", config.Config.Data)
+	if site.Config.Data["instagram"] != "https://www.instagram.com/youngfatigue/" {
+		t.Fatalf("Incorrect site.Config.Data: %v", site.Config.Data)
 	}
-	if len(config.Pages) != 4 {
-		t.Fatalf("Incorrect config.Pages: %v", config.Pages)
+	if len(site.Pages) != 4 {
+		t.Fatalf("Incorrect site.Pages: %v", site.Pages)
 	}
 }
 
-func TestLoadMissingSite(t *testing.T) {
+func TestLoadSiteMissingSite(t *testing.T) {
 	dirPath, err := createExampleSite()
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
 	os.RemoveAll(dirPath) // remove the directory so it doesn't exist
 
-	_, err = Load(dirPath)
+	_, err = LoadSite(dirPath)
 	if err == nil {
 		t.Fatalf("Expected error but got nil")
 	}
 }
 
-func TestLoadMissingConfig(t *testing.T) {
+func TestLoadSiteMissingConfig(t *testing.T) {
 	dirPath, err := createExampleSite()
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
 	os.Remove(path.Join(dirPath, "config.yaml")) // remove the config file so it doesn't exist
 
-	_, err = Load(dirPath)
+	_, err = LoadSite(dirPath)
 	if err == nil {
 		t.Fatalf("Expected error but got nil")
 	}
 }
 
-func TestLoadMissingPages(t *testing.T) {
+func TestLoadSiteMissingPages(t *testing.T) {
 	dirPath, err := createExampleSite()
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
 	os.RemoveAll(path.Join(dirPath, "pages")) // remove the directory so it doesn't exist
 
-	_, err = Load(dirPath)
+	_, err = LoadSite(dirPath)
 	if err == nil {
 		t.Fatalf("Expected error but got nil")
 	}
