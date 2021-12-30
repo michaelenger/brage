@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log"
+	"os"
 	"path"
 
 	"github.com/michaelenger/brage/site"
@@ -42,7 +43,15 @@ var buildCmd = &cobra.Command{
 
 		logger.Printf("Building site in: %v", destinationPath)
 
-		// TODO: copy assets
+		assetsDirectory := path.Join(sourcePath, "assets")
+		fileInfo, _ := os.Stat(sourcePath)
+		if fileInfo.IsDir() {
+			assets, err := utils.CopyDirectory(assetsDirectory, destinationPath)
+			if err != nil {
+				logger.Fatalf("Unable to copy assets: %v", err)
+			}
+			logger.Printf("Copied %v assets", assets)
+		}
 
 		for _, page := range site.Pages {
 			filePath := path.Join(destinationPath, page.Path, "index.html")
