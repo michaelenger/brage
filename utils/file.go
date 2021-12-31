@@ -84,22 +84,22 @@ func CopyFile(source string, destination string) error {
 	return err
 }
 
-// Recursively build a list of pages.
-func ListPages(dirPath string, prefixPath string) (map[string]string, error) {
+// Recursively build a list of HTML files and returns a map of relative path to absolute path.
+func ListHTMLFiles(directoryPath string, prefixPath string) (map[string]string, error) {
 	pages := map[string]string{}
-	htmlFilePattern := regexp.MustCompile(`^(.+?)\.html$`)
+	filenamePattern := regexp.MustCompile(`^(.+?)\.html$`)
 
-	files, err := os.ReadDir(dirPath)
+	files, err := os.ReadDir(directoryPath)
 	if err != nil {
 		return pages, err
 	}
 
 	for _, file := range files {
 		filename := file.Name()
-		filepath := path.Join(dirPath, filename)
+		filepath := path.Join(directoryPath, filename)
 
 		if file.IsDir() {
-			subpages, err := ListPages(filepath, path.Join(prefixPath, filename))
+			subpages, err := ListHTMLFiles(filepath, path.Join(prefixPath, filename))
 			if err != nil {
 				return pages, err
 			}
@@ -108,17 +108,12 @@ func ListPages(dirPath string, prefixPath string) (map[string]string, error) {
 			}
 		}
 
-		filenameMatch := htmlFilePattern.FindStringSubmatch(filename)
+		filenameMatch := filenamePattern.FindStringSubmatch(filename)
 		if len(filenameMatch) == 0 {
 			continue
 		}
 
-		page := filenameMatch[1]
-		if page == "index" {
-			page = ""
-		}
-
-		pages[path.Join(prefixPath, page)] = filepath
+		pages[path.Join(prefixPath, filenameMatch[1])] = filepath
 	}
 
 	return pages, nil

@@ -36,7 +36,7 @@ var buildCmd = &cobra.Command{
 
 		logger.Printf("Loading site from: %v", sourcePath)
 
-		site, err := site.LoadSite(sourcePath)
+		site, err := site.Load(sourcePath)
 		if err != nil {
 			logger.Fatalf("Unable to load site: %v", err)
 		}

@@ -2,6 +2,4 @@
 <a href="/another-page">Go to another page</a>
 <a href="/sub">Go to a sub-page</a>
 
-{{ range .Data.memes }}
-    <p>{{ . }}</p>
-{{ end }}
+{{ template "memes" . }}

@@ -2,6 +2,7 @@ package site
 
 import (
 	"bytes"
+	"os"
 	"path"
 	"strings"
 	"text/template"
@@ -21,14 +22,42 @@ func (page Page) Title() string {
 			"-", " "))
 }
 
+// Load the sub-templates.
+func loadSubTemplates(mainTemplate *template.Template, templateFiles map[string]string) error {
+	for name, filePath := range templateFiles {
+		subTemplate := mainTemplate.New(name)
+		contents, err := os.ReadFile(filePath)
+		if err != nil {
+			return err
+		}
+		_, err = subTemplate.Parse(string(contents))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Render a page using a specific site config and layout file.
-func (page Page) Render(site SiteDescription) (string, error) {
+func (page Page) Render(site Site) (string, error) {
 	layoutFilePath := path.Join(site.SourceDirectory, "layout.html")
 	layoutTemplate, err := template.ParseFiles(layoutFilePath)
 	if err != nil {
 		return "", err
 	}
+
+	err = loadSubTemplates(layoutTemplate, site.Templates)
+	if err != nil {
+		return "", err
+	}
+
 	pageTemplate, err := template.ParseFiles(page.TemplateFile)
+	if err != nil {
+		return "", err
+	}
+
+	err = loadSubTemplates(pageTemplate, site.Templates)
 	if err != nil {
 		return "", err
 	}

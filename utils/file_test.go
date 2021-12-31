@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestListPages(t *testing.T) {
+func TestListHTMLFiles(t *testing.T) {
 	// Create a temporary hierarchy
 	temporaryDirectory, err := os.MkdirTemp("", "pages")
 	if err != nil {
@@ -39,12 +39,12 @@ func TestListPages(t *testing.T) {
 	}
 	pageFile.Close()
 
-	result, err := ListPages(temporaryDirectory, "/")
+	result, err := ListHTMLFiles(temporaryDirectory, "derp")
 	expected := map[string]string{
-		"/":              path.Join(temporaryDirectory, "index.html"),
-		"/some-page":     path.Join(temporaryDirectory, "some-page.html"),
-		"/sub":           path.Join(subPath, "index.html"),
-		"/sub/subsubsub": path.Join(subPath, "subsubsub.html"),
+		"derp/index":         path.Join(temporaryDirectory, "index.html"),
+		"derp/some-page":     path.Join(temporaryDirectory, "some-page.html"),
+		"derp/sub/index":     path.Join(subPath, "index.html"),
+		"derp/sub/subsubsub": path.Join(subPath, "subsubsub.html"),
 	}
 
 	if !reflect.DeepEqual(result, expected) {
