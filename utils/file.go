@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/gomarkdown/markdown"
-    "github.com/gomarkdown/markdown/parser"
+	"github.com/gomarkdown/markdown/parser"
 )
 
 // Load the contents of markdown file.
