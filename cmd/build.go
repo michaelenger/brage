@@ -38,7 +38,7 @@ var buildCmd = &cobra.Command{
 
 		site, err := site.Load(sourcePath)
 		if err != nil {
-			logger.Fatalf("Unable to load site: %v", err)
+			logger.Fatalf("ERROR! Unable to load site: %v", err)
 		}
 
 		logger.Printf("Building site in: %v", destinationPath)
@@ -48,7 +48,7 @@ var buildCmd = &cobra.Command{
 		if fileInfo.IsDir() {
 			assets, err := utils.CopyDirectory(assetsDirectory, destinationPath)
 			if err != nil {
-				logger.Fatalf("Unable to copy assets: %v", err)
+				logger.Fatalf("ERROR! Unable to copy assets: %v", err)
 			}
 			logger.Printf("Copied %v assets", assets)
 		}
@@ -57,7 +57,7 @@ var buildCmd = &cobra.Command{
 			filePath := path.Join(destinationPath, page.Path, "index.html")
 			content, err := page.Render(site)
 			if err != nil {
-				logger.Fatalf("Unable to render page file: %v", err)
+				logger.Fatalf("ERROR! Unable to render page file: %v", err)
 			}
 			utils.WriteFile(filePath, content)
 			logger.Printf("Wrote file for: %v", page.Path)

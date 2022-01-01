@@ -48,7 +48,10 @@ func CopyDirectory(sourceDirectory string, targetDirectory string) (int, error) 
 
 	targetDirectory = path.Join(targetDirectory, path.Base(sourceDirectory))
 
-	os.MkdirAll(targetDirectory, 0755)
+	err = os.MkdirAll(targetDirectory, 0755)
+	if err != nil {
+		return count, err
+	}
 
 	for _, file := range files {
 		sourcePath := path.Join(sourceDirectory, file.Name())
