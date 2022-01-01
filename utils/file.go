@@ -29,12 +29,12 @@ func readMarkdownFile(filePath string) (string, error) {
 // Convert a relative path to an absolute path, relative to the current
 // working directory.
 func AbsolutePath(relativePath string) string {
-	currentDir, err := os.Getwd()
+	absolutePath, err := filepath.Abs(relativePath)
 	if err != nil {
 		return relativePath // fail silently
 	}
 
-	return path.Join(currentDir, relativePath)
+	return absolutePath
 }
 
 // Copy a directory into another.
