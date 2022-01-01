@@ -80,7 +80,11 @@ func createExampleSite() (string, error) {
 		return "", err
 	}
 	templateFile.Close()
-	templateFile, err = os.Create(path.Join(templatesPath, "some-template.html"))
+	templateFile, err = os.Create(path.Join(templatesPath, "something.markdown"))
+	if err != nil {
+		return "", err
+	}
+	_, err = templateFile.WriteString("**bold text**")
 	if err != nil {
 		return "", err
 	}

@@ -7,18 +7,28 @@ import (
 	"testing"
 )
 
-func TestListHTMLFiles(t *testing.T) {
+func TestListTemplateFiles(t *testing.T) {
 	// Create a temporary hierarchy
 	temporaryDirectory, err := os.MkdirTemp("", "pages")
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	pageFile, err := os.Create(path.Join(temporaryDirectory, "index.html"))
+	pageFile, err := os.Create(path.Join(temporaryDirectory, ".hidden.html"))
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
 	pageFile.Close()
-	pageFile, err = os.Create(path.Join(temporaryDirectory, "some-page.html"))
+	pageFile, err = os.Create(path.Join(temporaryDirectory, "index.html"))
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	pageFile.Close()
+	pageFile, err = os.Create(path.Join(temporaryDirectory, "some-page.markdown"))
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	pageFile.Close()
+	pageFile, err = os.Create(path.Join(temporaryDirectory, "notatemplate.real"))
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -33,18 +43,18 @@ func TestListHTMLFiles(t *testing.T) {
 		t.Fatalf("%v", err)
 	}
 	pageFile.Close()
-	pageFile, err = os.Create(path.Join(subPath, "subsubsub.html"))
+	pageFile, err = os.Create(path.Join(subPath, "subsubsub.markdown"))
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
 	pageFile.Close()
 
-	result, err := ListHTMLFiles(temporaryDirectory, "derp")
+	result, err := ListTemplateFiles(temporaryDirectory, "derp")
 	expected := map[string]string{
 		"derp/index":         path.Join(temporaryDirectory, "index.html"),
-		"derp/some-page":     path.Join(temporaryDirectory, "some-page.html"),
+		"derp/some-page":     path.Join(temporaryDirectory, "some-page.markdown"),
 		"derp/sub/index":     path.Join(subPath, "index.html"),
-		"derp/sub/subsubsub": path.Join(subPath, "subsubsub.html"),
+		"derp/sub/subsubsub": path.Join(subPath, "subsubsub.markdown"),
 	}
 
 	if !reflect.DeepEqual(result, expected) {

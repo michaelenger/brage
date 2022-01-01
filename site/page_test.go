@@ -40,16 +40,6 @@ func TestPageRender(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	templatesPath := path.Join(temporaryDirectory, "templates")
-	if err := os.Mkdir(templatesPath, 0755); err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-	templateTemplate := `<em>This is from a template</em>`
-	templateFilePath := path.Join(templatesPath, "temp.html")
-	if err := utils.WriteFile(templateFilePath, templateTemplate); err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-
 	pageTemplate := `<h1>{{ .Page.Title }}</h1>
 		{{ range .Data.Skills }}
 			<p>{{ . }}</p>
@@ -87,7 +77,7 @@ func TestPageRender(t *testing.T) {
 		temporaryDirectory,
 		[]Page{},
 		map[string]string{
-			"temp": templateFilePath,
+			"temp": `<em>This is from a template</em>`,
 		},
 	}
 

@@ -58,7 +58,7 @@ func Load(siteDirectory string) (Site, error) {
 		return site, fmt.Errorf("No pages found at specified path: %v", pagesPath)
 	}
 
-	pages, err := utils.ListHTMLFiles(pagesPath, "/")
+	pages, err := utils.ListTemplateFiles(pagesPath, "/")
 	if err != nil {
 		return site, err
 	}
@@ -79,11 +79,18 @@ func Load(siteDirectory string) (Site, error) {
 		return site, nil
 	}
 
-	templates, err := utils.ListHTMLFiles(templatesPath, "")
+	templates, err := utils.ListTemplateFiles(templatesPath, "")
 	if err != nil {
 		return site, err
 	}
 	site.Templates = templates
+	for relativePath, filePath := range templates {
+		contents, err := os.ReadFile(filePath)
+		if err != nil {
+			return site, err
+		}
+		site.Templates[relativePath] = string(contents)
+	}
 
 	return site, nil
 }

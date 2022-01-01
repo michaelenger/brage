@@ -2,7 +2,6 @@ package site
 
 import (
 	"bytes"
-	"os"
 	"path"
 	"strings"
 	"text/template"
@@ -22,15 +21,11 @@ func (page Page) Title() string {
 			"-", " "))
 }
 
-// Load the sub-templates.
-func loadSubTemplates(mainTemplate *template.Template, templateFiles map[string]string) error {
-	for name, filePath := range templateFiles {
+// Add the extra templates to the main template.
+func addTemplates(mainTemplate *template.Template, templateFiles map[string]string) error {
+	for name, content := range templateFiles {
 		subTemplate := mainTemplate.New(name)
-		contents, err := os.ReadFile(filePath)
-		if err != nil {
-			return err
-		}
-		_, err = subTemplate.Parse(string(contents))
+		_, err := subTemplate.Parse(content)
 		if err != nil {
 			return err
 		}
@@ -47,7 +42,7 @@ func (page Page) Render(site Site) (string, error) {
 		return "", err
 	}
 
-	err = loadSubTemplates(layoutTemplate, site.Templates)
+	err = addTemplates(layoutTemplate, site.Templates)
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +52,7 @@ func (page Page) Render(site Site) (string, error) {
 		return "", err
 	}
 
-	err = loadSubTemplates(pageTemplate, site.Templates)
+	err = addTemplates(pageTemplate, site.Templates)
 	if err != nil {
 		return "", err
 	}

@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 	"path"
-	"regexp"
+	"path/filepath"
 )
 
 // Convert a relative path to an absolute path, relative to the current
@@ -85,9 +85,8 @@ func CopyFile(source string, destination string) error {
 }
 
 // Recursively build a list of HTML files and returns a map of relative path to absolute path.
-func ListHTMLFiles(directoryPath string, prefixPath string) (map[string]string, error) {
+func ListTemplateFiles(directoryPath string, prefixPath string) (map[string]string, error) {
 	pages := map[string]string{}
-	filenamePattern := regexp.MustCompile(`^(.+?)\.html$`)
 
 	files, err := os.ReadDir(directoryPath)
 	if err != nil {
@@ -96,39 +95,46 @@ func ListHTMLFiles(directoryPath string, prefixPath string) (map[string]string, 
 
 	for _, file := range files {
 		filename := file.Name()
-		filepath := path.Join(directoryPath, filename)
+		if filename[0] == '.' {
+			continue
+		}
+
+		fullPath := path.Join(directoryPath, filename)
 
 		if file.IsDir() {
-			subpages, err := ListHTMLFiles(filepath, path.Join(prefixPath, filename))
+			subpages, err := ListTemplateFiles(fullPath, path.Join(prefixPath, filename))
 			if err != nil {
 				return pages, err
 			}
 			for page, file := range subpages {
 				pages[page] = file
 			}
-		}
 
-		filenameMatch := filenamePattern.FindStringSubmatch(filename)
-		if len(filenameMatch) == 0 {
 			continue
 		}
 
-		pages[path.Join(prefixPath, filenameMatch[1])] = filepath
+		fileExtension := filepath.Ext(filename)
+		if fileExtension != ".html" && fileExtension != ".markdown" {
+			continue
+		}
+
+		templateName := path.Join(prefixPath, filename[:len(filename) - len(fileExtension)])
+		pages[templateName] = fullPath
 	}
 
 	return pages, nil
 }
 
 // Write the contents of the string to a file.
-func WriteFile(filePath string, contents string) error {
-	targetDirectory := path.Dir(filePath)
+func WriteFile(targetFilePath string, contents string) error {
+	targetDirectory := path.Dir(targetFilePath)
 	if _, err := os.Stat(targetDirectory); os.IsNotExist(err) {
 		if err = os.MkdirAll(targetDirectory, 0755); err != nil {
 			return err
 		}
 	}
 
-	file, err := os.Create(filePath)
+	file, err := os.Create(targetFilePath)
 	if err != nil {
 		return err
 	}
