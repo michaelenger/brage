@@ -73,15 +73,11 @@ var initCmd = &cobra.Command{
 		}
 		targetPath = utils.AbsolutePath(targetPath)
 
-		// /pages
-		// /pages/index.html
-		// /pages/about.html
-		// /templates
-		// /templates/hello.markdown
-
 		if _, err := os.Stat(targetPath); !os.IsNotExist(err) {
 			logger.Fatalf("ERROR! Directory already exists: %v", targetPath)
 		}
+
+		logger.Printf("Creating site in: %v", targetPath)
 
 		if err := os.MkdirAll(targetPath, 0755); err != nil {
 			logger.Fatalf("ERROR! Unable to create target directory: %v", err)
@@ -94,12 +90,16 @@ var initCmd = &cobra.Command{
 			logger.Fatalf("ERROR! Unable to create config file: %v", err)
 		}
 
+		logger.Print("Created: /config.yaml")
+
 		// Layout
 
 		layoutFile := path.Join(targetPath, "layout.html")
 		if err := utils.WriteFile(layoutFile, layoutContent); err != nil {
 			logger.Fatalf("ERROR! Unable to create layout file: %v", err)
 		}
+
+		logger.Print("Created: /layout.html")
 
 		// Assets
 
@@ -108,10 +108,14 @@ var initCmd = &cobra.Command{
 			logger.Fatalf("ERROR! Unable to create assets directory: %v", err)
 		}
 
+		logger.Print("Created: /assets")
+
 		styleFile := path.Join(assetsDirectory, "style.css")
 		if err := utils.WriteFile(styleFile, styleContent); err != nil {
 			logger.Fatalf("ERROR! Unable to create style file: %v", err)
 		}
+
+		logger.Print("Created: /assets/style.css")
 
 		// Pages
 
@@ -120,15 +124,21 @@ var initCmd = &cobra.Command{
 			logger.Fatalf("ERROR! Unable to create pages directory: %v", err)
 		}
 
+		logger.Print("Created: /pages")
+
 		indexFile := path.Join(pagesDirectory, "index.html")
 		if err := utils.WriteFile(indexFile, indexContent); err != nil {
 			logger.Fatalf("ERROR! Unable to create index file: %v", err)
 		}
 
+		logger.Print("Created: /pages/index.html")
+
 		aboutFile := path.Join(pagesDirectory, "about.html")
 		if err := utils.WriteFile(aboutFile, aboutContent); err != nil {
 			logger.Fatalf("ERROR! Unable to create about file: %v", err)
 		}
+
+		logger.Print("Created: /pages/about.html")
 
 		// Templates
 
@@ -137,10 +147,14 @@ var initCmd = &cobra.Command{
 			logger.Fatalf("ERROR! Unable to create templates directory: %v", err)
 		}
 
+		logger.Print("Created: /templates")
+
 		extraFile := path.Join(templatesDirectory, "extra.html")
 		if err := utils.WriteFile(extraFile, extraContent); err != nil {
 			logger.Fatalf("ERROR! Unable to create extra file: %v", err)
 		}
+
+		logger.Print("Created: /templates/extra.html")
 	},
 }
 
