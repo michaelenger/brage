@@ -8,8 +8,8 @@ import (
 )
 
 type Page struct {
-	Path         string
-	TemplateFile string
+	Path     string
+	Template string
 }
 
 // Get the title of a page.
@@ -36,8 +36,8 @@ func addTemplates(mainTemplate *template.Template, templateFiles map[string]stri
 
 // Render a page using a specific site config and layout file.
 func (page Page) Render(site Site) (string, error) {
-	layoutFilePath := path.Join(site.SourceDirectory, "layout.html")
-	layoutTemplate, err := template.ParseFiles(layoutFilePath)
+	layoutTemplate := template.New("layout")
+	layoutTemplate, err := layoutTemplate.Parse(site.Layout)
 	if err != nil {
 		return "", err
 	}
@@ -47,7 +47,8 @@ func (page Page) Render(site Site) (string, error) {
 		return "", err
 	}
 
-	pageTemplate, err := template.ParseFiles(page.TemplateFile)
+	pageTemplate := template.New("page")
+	pageTemplate, err = pageTemplate.Parse(page.Template)
 	if err != nil {
 		return "", err
 	}

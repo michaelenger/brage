@@ -84,8 +84,8 @@ func CopyFile(source string, destination string) error {
 	return err
 }
 
-// Recursively build a list of HTML files and returns a map of relative path to absolute path.
-func ListTemplateFiles(directoryPath string, prefixPath string) (map[string]string, error) {
+// Recursively build a list of template files and returns a map of their name to their content.
+func LoadTemplateFiles(directoryPath string, prefixPath string) (map[string]string, error) {
 	pages := map[string]string{}
 
 	files, err := os.ReadDir(directoryPath)
@@ -102,7 +102,7 @@ func ListTemplateFiles(directoryPath string, prefixPath string) (map[string]stri
 		fullPath := path.Join(directoryPath, filename)
 
 		if file.IsDir() {
-			subpages, err := ListTemplateFiles(fullPath, path.Join(prefixPath, filename))
+			subpages, err := LoadTemplateFiles(fullPath, path.Join(prefixPath, filename))
 			if err != nil {
 				return pages, err
 			}
@@ -118,8 +118,13 @@ func ListTemplateFiles(directoryPath string, prefixPath string) (map[string]stri
 			continue
 		}
 
-		templateName := path.Join(prefixPath, filename[:len(filename) - len(fileExtension)])
-		pages[templateName] = fullPath
+		contents, err := os.ReadFile(fullPath)
+		if err != nil {
+			return pages, err
+		}
+
+		templateName := path.Join(prefixPath, filename[:len(filename)-len(fileExtension)])
+		pages[templateName] = string(contents)
 	}
 
 	return pages, nil

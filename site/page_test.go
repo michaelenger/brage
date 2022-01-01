@@ -2,11 +2,8 @@ package site
 
 import (
 	"os"
-	"path"
 	"regexp"
 	"testing"
-
-	"github.com/michaelenger/brage/utils"
 )
 
 var testConfig = SiteConfig{
@@ -29,31 +26,14 @@ func TestPageRender(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	layoutTemplate := `<head>
-			<title>{{ .Site.Title }}</title>
-		</head>
-		<body>
-		{{ .Content }}
-		</body>`
-	layoutFilePath := path.Join(temporaryDirectory, "layout.html")
-	if err := utils.WriteFile(layoutFilePath, layoutTemplate); err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-
-	pageTemplate := `<h1>{{ .Page.Title }}</h1>
+	page := Page{
+		"/example",
+		`<h1>{{ .Page.Title }}</h1>
 		{{ range .Data.Skills }}
 			<p>{{ . }}</p>
 		{{ end }}
 
-		{{ template "temp" . }}`
-	pageFilePath := path.Join(temporaryDirectory, "page.html")
-	if err := utils.WriteFile(pageFilePath, pageTemplate); err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-
-	page := Page{
-		"/example",
-		pageFilePath,
+		{{ template "temp" . }}`,
 	}
 
 	expected := `<head>
@@ -75,6 +55,12 @@ func TestPageRender(t *testing.T) {
 	site := Site{
 		testConfig,
 		temporaryDirectory,
+		`<head>
+			<title>{{ .Site.Title }}</title>
+		</head>
+		<body>
+		{{ .Content }}
+		</body>`,
 		[]Page{},
 		map[string]string{
 			"temp": `<em>This is from a template</em>`,

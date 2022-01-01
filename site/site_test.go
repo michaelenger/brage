@@ -31,11 +31,22 @@ func createExampleSite() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer configFile.Close()
 	_, err = configFile.WriteString(exampleConfig)
 	if err != nil {
 		return "", err
 	}
+	configFile.Close()
+
+	// Layout file
+	layoutFile, err := os.Create(path.Join(temporaryDirectory, "layout.html"))
+	if err != nil {
+		return "", err
+	}
+	_, err = layoutFile.WriteString("This is a layout")
+	if err != nil {
+		return "", err
+	}
+	layoutFile.Close()
 
 	// Pages
 	pagesPath := path.Join(temporaryDirectory, "pages")
@@ -129,6 +140,9 @@ func TestLoad(t *testing.T) {
 	}
 	if site.SourceDirectory != dirPath {
 		t.Fatalf("Incorrect site.SourceDirectory: %v", site.SourceDirectory)
+	}
+	if site.Layout != "This is a layout" {
+		t.Fatalf("Incorrect site.Layout: %v", site.Layout)
 	}
 	if site.Config.Data["instagram"] != "https://www.instagram.com/youngfatigue/" {
 		t.Fatalf("Incorrect site.Config.Data: %v", site.Config.Data)
