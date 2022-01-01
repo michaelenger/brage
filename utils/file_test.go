@@ -31,7 +31,7 @@ func TestLoadTemplateFiles(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	_, err = pageFile.WriteString("some markdown file")
+	_, err = pageFile.WriteString("some _markdown_ file")
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -59,7 +59,7 @@ func TestLoadTemplateFiles(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	_, err = pageFile.WriteString("subsubsub markdown file")
+	_, err = pageFile.WriteString("subsubsub _markdown_ file")
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -68,9 +68,9 @@ func TestLoadTemplateFiles(t *testing.T) {
 	result, err := LoadTemplateFiles(temporaryDirectory, "derp")
 	expected := map[string]string{
 		"derp/index":         "index file",
-		"derp/some-page":     "some markdown file",
+		"derp/some-page":     "<p>some <em>markdown</em> file</p>\n",
 		"derp/sub/index":     "sub index file",
-		"derp/sub/subsubsub": "subsubsub markdown file",
+		"derp/sub/subsubsub": "<p>subsubsub <em>markdown</em> file</p>\n",
 	}
 
 	if !reflect.DeepEqual(result, expected) {

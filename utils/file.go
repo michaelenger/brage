@@ -7,7 +7,24 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+
+	"github.com/gomarkdown/markdown"
+    "github.com/gomarkdown/markdown/parser"
 )
+
+// Load the contents of markdown file.
+func readMarkdownFile(filePath string) (string, error) {
+	markdownExtensions := parser.CommonExtensions
+	markdownParser := parser.NewWithExtensions(markdownExtensions)
+
+	contents, err := os.ReadFile(filePath)
+	if err != nil {
+		return "", err
+	}
+	htmlContents := markdown.ToHTML(contents, markdownParser, nil)
+
+	return string(htmlContents), nil
+}
 
 // Convert a relative path to an absolute path, relative to the current
 // working directory.
@@ -114,17 +131,24 @@ func LoadTemplateFiles(directoryPath string, prefixPath string) (map[string]stri
 		}
 
 		fileExtension := filepath.Ext(filename)
-		if fileExtension != ".html" && fileExtension != ".markdown" {
+		var templateContents string
+		if fileExtension == ".html" {
+			contents, err := os.ReadFile(fullPath)
+			if err != nil {
+				return pages, err
+			}
+			templateContents = string(contents)
+		} else if fileExtension == ".markdown" {
+			templateContents, err = readMarkdownFile(fullPath)
+			if err != nil {
+				return pages, err
+			}
+		} else {
 			continue
 		}
 
-		contents, err := os.ReadFile(fullPath)
-		if err != nil {
-			return pages, err
-		}
-
 		templateName := path.Join(prefixPath, filename[:len(filename)-len(fileExtension)])
-		pages[templateName] = string(contents)
+		pages[templateName] = templateContents
 	}
 
 	return pages, nil
