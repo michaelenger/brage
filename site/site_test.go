@@ -155,6 +155,19 @@ func TestLoad(t *testing.T) {
 	}
 }
 
+func TestLoadWithoutTemplate(t *testing.T) {
+	dirPath, err := createExampleSite()
+	if err != nil {
+		t.Fatalf("Unable to create example site: %v", err)
+	}
+	os.RemoveAll(path.Join(dirPath, "templates")) // remove the templates directory
+
+	_, err = Load(dirPath)
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+}
+
 func TestLoadMissingSite(t *testing.T) {
 	dirPath, err := createExampleSite()
 	if err != nil {

@@ -87,8 +87,8 @@ func Load(siteDirectory string) (Site, error) {
 	// Templates
 
 	templatesPath := path.Join(siteDirectory, "templates")
-	templatesFileInfo, _ := os.Stat(templatesPath)
-	if !templatesFileInfo.IsDir() {
+	templatesFileInfo, err := os.Stat(templatesPath)
+	if err != nil || !templatesFileInfo.IsDir() {
 		return site, nil
 	}
 
