@@ -31,7 +31,7 @@ var initCmd = &cobra.Command{
 
 		logger.Printf("Creating site in: %v", targetPath)
 
-		files := map[string]string {
+		files := map[string]string{
 			"config.yaml": `title: My Site
 description: This is my Brage site.
 image: dog.png

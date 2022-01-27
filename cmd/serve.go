@@ -21,8 +21,8 @@ var port string
 
 // Server handler based on a Site
 type siteHandler struct {
-	site   site.Site
-	logger *log.Logger
+	sitePath string
+	logger   *log.Logger
 }
 
 func (handler *siteHandler) serveFile(assetFile string, w http.ResponseWriter, r *http.Request) {
@@ -53,15 +53,20 @@ func (handler *siteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	requestPath := r.URL.Path
 	handler.logger.Printf("Request: %v %v", r.Method, requestPath)
 
+	site, err := site.Load(handler.sitePath)
+	if err != nil {
+		handler.logger.Fatalf("ERROR! Unable to load site: %v", err)
+	}
+
 	if len(requestPath) >= 7 && requestPath[:7] == "/assets" {
-		assetPath := path.Join(handler.site.SourceDirectory, requestPath)
+		assetPath := path.Join(site.SourceDirectory, requestPath)
 		handler.serveFile(assetPath, w, r)
 		return
 	}
 
-	for _, page := range handler.site.Pages {
+	for _, page := range site.Pages {
 		if page.Path == requestPath {
-			content, err := page.Render(handler.site)
+			content, err := page.Render(site)
 			if err != nil {
 				handler.logger.Print("500 Server Error")
 				errorText := fmt.Sprintf("Unable to render page file: %v", err)
@@ -100,13 +105,14 @@ var serveCmd = &cobra.Command{
 
 		logger.Printf("Loading site from: %v", sourcePath)
 
-		site, err := site.Load(sourcePath)
+		// Load the site to ensure that everything we need is there
+		_, err := site.Load(sourcePath)
 		if err != nil {
 			logger.Fatalf("ERROR! Unable to load site: %v", err)
 		}
 
 		handler := siteHandler{
-			site,
+			sourcePath,
 			logger,
 		}
 
