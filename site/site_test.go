@@ -19,32 +19,32 @@ data:
     - "[Dislocation] is super fun!"
 `
 
-func createExampleSite() (string, error) {
+func createExampleSite(t *testing.T) string {
 	// Site directory
 	temporaryDirectory, err := os.MkdirTemp("", "examplesite")
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 
 	// Config file
 	configFile, err := os.Create(path.Join(temporaryDirectory, "config.yaml"))
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	_, err = configFile.WriteString(exampleConfig)
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	configFile.Close()
 
 	// Layout file
 	layoutFile, err := os.Create(path.Join(temporaryDirectory, "layout.html"))
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	_, err = layoutFile.WriteString("This is a layout")
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	layoutFile.Close()
 
@@ -52,31 +52,31 @@ func createExampleSite() (string, error) {
 	pagesPath := path.Join(temporaryDirectory, "pages")
 	err = os.Mkdir(pagesPath, 0755)
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	pageFile, err := os.Create(path.Join(pagesPath, "index.html"))
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	pageFile.Close()
 	pageFile, err = os.Create(path.Join(pagesPath, "some-page.html"))
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	pageFile.Close()
 	subPagesPath := path.Join(pagesPath, "sub")
 	err = os.Mkdir(subPagesPath, 0755)
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	pageFile, err = os.Create(path.Join(subPagesPath, "index.html"))
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	pageFile.Close()
 	pageFile, err = os.Create(path.Join(subPagesPath, "subsubsub.html"))
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	pageFile.Close()
 
@@ -84,41 +84,38 @@ func createExampleSite() (string, error) {
 	templatesPath := path.Join(temporaryDirectory, "templates")
 	err = os.Mkdir(templatesPath, 0755)
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	templateFile, err := os.Create(path.Join(templatesPath, "one.html"))
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	templateFile.Close()
 	templateFile, err = os.Create(path.Join(templatesPath, "something.markdown"))
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	_, err = templateFile.WriteString("**bold text**")
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	templateFile.Close()
 	subTemplatesPath := path.Join(templatesPath, "sub")
 	err = os.Mkdir(subTemplatesPath, 0755)
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	templateFile, err = os.Create(path.Join(subTemplatesPath, "two.html"))
 	if err != nil {
-		return "", err
+		t.Fatalf("Unable to create example site: %v", err)
 	}
 	templateFile.Close()
 
-	return temporaryDirectory, nil
+	return temporaryDirectory
 }
 
 func TestLoad(t *testing.T) {
-	dirPath, err := createExampleSite()
-	if err != nil {
-		t.Fatalf("Unable to create example site: %v", err)
-	}
+	dirPath := createExampleSite(t)
 	defer os.RemoveAll(dirPath)
 
 	site, err := Load(dirPath)
@@ -155,53 +152,44 @@ func TestLoad(t *testing.T) {
 	}
 }
 
-func TestLoadWithoutTemplate(t *testing.T) {
-	dirPath, err := createExampleSite()
-	if err != nil {
-		t.Fatalf("Unable to create example site: %v", err)
-	}
-	os.RemoveAll(path.Join(dirPath, "templates")) // remove the templates directory
+func TestLoadWithoutTemplates(t *testing.T) {
+	dirPath := createExampleSite(t)
+	defer os.RemoveAll(dirPath)
+	os.RemoveAll(path.Join(dirPath, "templates"))
 
-	_, err = Load(dirPath)
+	_, err := Load(dirPath)
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 }
 
 func TestLoadMissingSite(t *testing.T) {
-	dirPath, err := createExampleSite()
-	if err != nil {
-		t.Fatalf("Unable to create example site: %v", err)
-	}
-	os.RemoveAll(dirPath) // remove the directory so it doesn't exist
+	dirPath := createExampleSite(t)
+	os.RemoveAll(dirPath)
 
-	_, err = Load(dirPath)
+	_, err := Load(dirPath)
 	if err == nil {
 		t.Fatalf("Expected error but got nil")
 	}
 }
 
 func TestLoadMissingConfig(t *testing.T) {
-	dirPath, err := createExampleSite()
-	if err != nil {
-		t.Fatalf("Unable to create example site: %v", err)
-	}
-	os.Remove(path.Join(dirPath, "config.yaml")) // remove the config file so it doesn't exist
+	dirPath := createExampleSite(t)
+	defer os.RemoveAll(dirPath)
+	os.Remove(path.Join(dirPath, "config.yaml"))
 
-	_, err = Load(dirPath)
+	_, err := Load(dirPath)
 	if err == nil {
 		t.Fatalf("Expected error but got nil")
 	}
 }
 
 func TestLoadMissingPages(t *testing.T) {
-	dirPath, err := createExampleSite()
-	if err != nil {
-		t.Fatalf("Unable to create example site: %v", err)
-	}
-	os.RemoveAll(path.Join(dirPath, "pages")) // remove the directory so it doesn't exist
+	dirPath := createExampleSite(t)
+	defer os.RemoveAll(dirPath)
+	os.RemoveAll(path.Join(dirPath, "pages"))
 
-	_, err = Load(dirPath)
+	_, err := Load(dirPath)
 	if err == nil {
 		t.Fatalf("Expected error but got nil")
 	}

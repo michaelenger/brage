@@ -32,7 +32,7 @@ func Load(siteDirectory string) (Site, error) {
 	var site Site
 
 	if _, err := os.Stat(siteDirectory); os.IsNotExist(err) {
-		return site, fmt.Errorf("No site found at specified path: %v", siteDirectory)
+		return site, fmt.Errorf("No site directory found at specified path: %v", siteDirectory)
 	}
 
 	// Config
