@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/michaelenger/brage/utils"
+	"brage/utils"
 	"gopkg.in/yaml.v2"
 )
 

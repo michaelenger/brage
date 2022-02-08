@@ -1,4 +1,4 @@
-module github.com/michaelenger/brage
+module brage
 
 go 1.17
 

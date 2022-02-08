@@ -5,8 +5,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/michaelenger/brage/site"
-	"github.com/michaelenger/brage/utils"
+	"brage/site"
+	"brage/utils"
 	"github.com/spf13/cobra"
 )
 
