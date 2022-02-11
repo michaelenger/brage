@@ -17,7 +17,7 @@ import (
 )
 
 // Port to serve the site on
-var port string
+var port int32
 
 // Server handler based on a Site
 type siteHandler struct {
@@ -132,7 +132,7 @@ var serveCommand = &cobra.Command{
 }
 
 func init() {
-	serveCommand.Flags().StringVarP(&port, "port", "p", "8080", "Port to serve the site on")
+	serveCommand.Flags().Int32VarP(&port, "port", "p", 8080, "Port to serve the site on")
 
 	rootCmd.AddCommand(serveCommand)
 }
