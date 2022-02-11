@@ -20,10 +20,6 @@ func runInitCommand(cmd *cobra.Command, args []string) {
 	}
 	targetPath = utils.AbsolutePath(targetPath)
 
-	if _, err := os.Stat(targetPath); !os.IsNotExist(err) {
-		logger.Fatalf("ERROR! Directory already exists: %v", targetPath)
-	}
-
 	logger.Printf("Creating site in: %v", targetPath)
 
 	files := map[string]string{
@@ -77,6 +73,10 @@ font-family: Helvetica, sans-serif;
 
 		if err := os.MkdirAll(path.Dir(fullPath), 0755); err != nil {
 			logger.Fatalf("ERROR! Unable to create directory: %v", err)
+		}
+
+		if _, err := os.Stat(fullPath); !os.IsNotExist(err) {
+			logger.Fatalf("ERROR! File already exists: %v", fullPath)
 		}
 
 		if err := utils.WriteFile(fullPath, contents); err != nil {
