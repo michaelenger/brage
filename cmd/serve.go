@@ -25,6 +25,42 @@ type siteHandler struct {
 	logger   *log.Logger
 }
 
+func runServeCommand(cmd *cobra.Command, args []string) {
+	logger := log.Default()
+
+	var sourcePath string
+	if len(args) > 0 {
+		sourcePath = args[0]
+	} else {
+		sourcePath = "."
+	}
+	sourcePath = utils.AbsolutePath(sourcePath)
+
+	logger.Printf("Loading site from: %v", sourcePath)
+
+	// Load the site to ensure that everything we need is there
+	_, err := site.Load(sourcePath)
+	if err != nil {
+		logger.Fatalf("ERROR! Unable to load site: %v", err)
+	}
+
+	handler := siteHandler{
+		sourcePath,
+		logger,
+	}
+
+	logger.Printf("Running server on: http://localhost:%v", port)
+
+	server := &http.Server{
+		Addr:           fmt.Sprintf(":%v", port),
+		Handler:        &handler,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+	logger.Fatal(server.ListenAndServe())
+}
+
 func (handler *siteHandler) serveFile(assetFile string, w http.ResponseWriter, r *http.Request) {
 	if _, err := os.Stat(assetFile); err != nil {
 		handler.logger.Print("404 Not Found")
@@ -87,50 +123,16 @@ func (handler *siteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	http.NotFound(w, r)
 }
 
-var serveCmd = &cobra.Command{
+var serveCommand = &cobra.Command{
 	Use:   "serve [PATH]",
 	Short: "Run a local server preview of the site",
 	Long:  "Run a local server preview of the site",
 	Args:  cobra.MaximumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		logger := log.Default()
-
-		var sourcePath string
-		if len(args) > 0 {
-			sourcePath = args[0]
-		} else {
-			sourcePath = "."
-		}
-		sourcePath = utils.AbsolutePath(sourcePath)
-
-		logger.Printf("Loading site from: %v", sourcePath)
-
-		// Load the site to ensure that everything we need is there
-		_, err := site.Load(sourcePath)
-		if err != nil {
-			logger.Fatalf("ERROR! Unable to load site: %v", err)
-		}
-
-		handler := siteHandler{
-			sourcePath,
-			logger,
-		}
-
-		logger.Printf("Running server on: http://localhost:%v", port)
-
-		server := &http.Server{
-			Addr:           fmt.Sprintf(":%v", port),
-			Handler:        &handler,
-			ReadTimeout:    10 * time.Second,
-			WriteTimeout:   10 * time.Second,
-			MaxHeaderBytes: 1 << 20,
-		}
-		logger.Fatal(server.ListenAndServe())
-	},
+	Run:   runServeCommand,
 }
 
 func init() {
-	serveCmd.Flags().StringVarP(&port, "port", "p", "8080", "Port to serve the site on")
+	serveCommand.Flags().StringVarP(&port, "port", "p", "8080", "Port to serve the site on")
 
-	rootCmd.AddCommand(serveCmd)
+	rootCmd.AddCommand(serveCommand)
 }
