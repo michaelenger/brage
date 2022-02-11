@@ -9,6 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var overwriteFiles bool
+
 func runInitCommand(cmd *cobra.Command, args []string) {
 	logger := log.Default()
 
@@ -75,8 +77,10 @@ font-family: Helvetica, sans-serif;
 			logger.Fatalf("ERROR! Unable to create directory: %v", err)
 		}
 
-		if _, err := os.Stat(fullPath); !os.IsNotExist(err) {
-			logger.Fatalf("ERROR! File already exists: %v", fullPath)
+		if !overwriteFiles {
+			if _, err := os.Stat(fullPath); !os.IsNotExist(err) {
+				logger.Fatalf("ERROR! File already exists: %v", fullPath)
+			}
 		}
 
 		if err := utils.WriteFile(fullPath, contents); err != nil {
@@ -96,5 +100,7 @@ var initCommand = &cobra.Command{
 }
 
 func init() {
+	initCommand.Flags().BoolVarP(&overwriteFiles, "force", "f", false, "Force creating of site - overwriting existing files")
+
 	rootCmd.AddCommand(initCommand)
 }

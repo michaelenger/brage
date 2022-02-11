@@ -22,6 +22,10 @@ brage init [PATH]
 be used as a template when creating a new site. If no `PATH` is specified then it
 will generate the files in the current directory.
 
+#### Options
+
+* `-f, --force` Force the creation of the site contents, overwriting any existing files
+
 ### Serve
 
 ```shell
