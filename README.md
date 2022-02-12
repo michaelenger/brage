@@ -80,6 +80,67 @@ Welcome to {{ .Site.Title }}.
 Here is my dog: {{ .Data.dog }}
 ```
 
+### Templates
+
+The HTML templates are all parsed as standard [Go text templates](https://pkg.go.dev/text/template)
+and HTML is not escaped, so you are forewarned that the rendering isn't going to
+sanitise anything for you.
+
+#### Variables
+
+The following variables are passed into the template and are available:
+
+##### Site
+
+Contains site data as defined in the `config.yaml` file:
+
+* `.Site.Title` Site title
+* `.Site.Description` Site description
+* `.Site.Image` Favicon/social media image
+* `.Site.RootUrl` Root URL
+
+##### Page
+
+Contains information about the current page:
+
+* `.Page.Path` Path to the page
+* `.Page.Template` Contents of the page template
+* `.Page.Title` Automatically inferred title based on the path
+
+The title for the root path is `"Home"`
+
+##### Data
+
+The `.Data` variable contains all the variables which were added in the `data` field
+in the `config.yaml` file. For example, the following config:
+
+```yaml
+data:
+  bananas:
+    - ripe
+    - green
+    - mouldy
+  explosions: "all over the place"
+  best_numbers:
+    - name: one
+      value: 1
+    - name: four
+      value: 4
+    - name: nine
+      value: 9
+```
+
+Would result in the following variables being present:
+
+* `.Data.bananas` An array of strings
+* `.Data.explosions` The string "all over the place"
+* `.Data.best_numbers` An array of the best numbers containing maps
+
+##### Content
+
+In the `layout.html` file there also exists a `.Content` variable which has the
+contents of the current page.
+
 ### Layout
 
 The `layout.html` file defines the layout of the site and is used to wrap all pages.
