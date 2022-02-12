@@ -14,6 +14,10 @@ type Page struct {
 
 // Get the title of a page.
 func (page Page) Title() string {
+	if page.Path == "/" {
+		return "Home"
+	}
+
 	return strings.Title(
 		strings.ReplaceAll(
 			strings.ReplaceAll(
