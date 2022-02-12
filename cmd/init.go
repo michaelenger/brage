@@ -31,10 +31,10 @@ image: dog.png
 rootUrl: https://example.org
 
 data:
-words:
-  - banana
-  - happy
-  - explosion
+  words:
+    - banana
+    - happy
+    - explosion
 `,
 		"layout.html": `<!DOCTYPE html>
 <html>
