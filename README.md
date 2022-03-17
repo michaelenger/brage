@@ -57,8 +57,8 @@ subdirectory if no output path is specified.
 
 ## Building Sites
 
-Sites are defined with a config [YAML](https://yaml.org/) file, a layout template,
-one or more page templates, and optional assets.
+Sites are defined with a config [YAML](https://yaml.org/) file, an optional layout
+template, one or more page templates, and optional assets.
 
 ### Config
 
@@ -158,6 +158,8 @@ An example layout which doesn't add more than the site title would be as follows
 </body>
 ```
 
+Using a layout template is optional, but _highly recommended_.
+
 ### Pages
 
 Pages are built based on template files in a `pages` subdirectory and need to have
@@ -198,5 +200,4 @@ subdirectory in the target path when building the site.
 Potential changes to the tool:
 
 * Remove any required items from the config file and just let the whole thing be in `.Data`?
-* Support not using a layout template?
 * Customise the path to the assets directory?

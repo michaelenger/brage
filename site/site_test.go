@@ -152,6 +152,21 @@ func TestLoad(t *testing.T) {
 	}
 }
 
+func TestLoadWithoutLayout(t *testing.T) {
+	dirPath := createExampleSite(t)
+	defer os.RemoveAll(dirPath)
+	os.Remove(path.Join(dirPath, "layout.html"))
+
+	site, err := Load(dirPath)
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if site.Layout != "{{ .Content }}" {
+		t.Fatalf("Incorrect site.Layout: %v", site.Layout)
+	}
+}
+
 func TestLoadWithoutTemplates(t *testing.T) {
 	dirPath := createExampleSite(t)
 	defer os.RemoveAll(dirPath)

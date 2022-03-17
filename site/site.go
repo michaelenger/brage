@@ -56,13 +56,14 @@ func Load(siteDirectory string) (Site, error) {
 
 	layoutPath := path.Join(siteDirectory, "layout.html")
 	if _, err := os.Stat(layoutPath); os.IsNotExist(err) {
-		return site, fmt.Errorf("No layout template found at specified path: %v", layoutPath)
+		site.Layout = "{{ .Content }}"
+	} else {
+		contents, err = os.ReadFile(layoutPath)
+		if err != nil {
+			return site, fmt.Errorf("Unable to load layout template at path: %v", layoutPath)
+		}
+		site.Layout = string(contents)
 	}
-	contents, err = os.ReadFile(layoutPath)
-	if err != nil {
-		return site, fmt.Errorf("Unable to load layout template at path: %v", layoutPath)
-	}
-	site.Layout = string(contents)
 
 	// Pages
 
