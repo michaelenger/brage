@@ -39,8 +39,7 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 	logger.Printf("Building site in: %v", destinationPath)
 
 	assetsDirectory := path.Join(sourcePath, "assets")
-	fileInfo, _ := os.Stat(sourcePath)
-	if fileInfo.IsDir() {
+	if fileInfo, err := os.Stat(assetsDirectory); !os.IsNotExist(err) && fileInfo.IsDir() {
 		assets, err := utils.CopyDirectory(assetsDirectory, destinationPath)
 		if err != nil {
 			logger.Fatalf("ERROR! Unable to copy assets: %v", err)
