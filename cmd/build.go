@@ -13,6 +13,9 @@ import (
 // Path to send build files to
 var destinationPath string
 
+// Whether to clean the assets dir
+var cleanAssetDir bool
+
 func runBuildCommand(cmd *cobra.Command, args []string) {
 	logger := log.Default()
 
@@ -40,6 +43,13 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 
 	assetsDirectory := path.Join(sourcePath, "assets")
 	if fileInfo, err := os.Stat(assetsDirectory); !os.IsNotExist(err) && fileInfo.IsDir() {
+		if cleanAssetDir {
+			err := os.RemoveAll(path.Join(destinationPath, "assets"))
+			if err != nil {
+				logger.Fatalf("ERROR! Unable to delete existing assets directory: %v", err)
+			}
+		}
+
 		assets, err := utils.CopyDirectory(assetsDirectory, destinationPath)
 		if err != nil {
 			logger.Fatalf("ERROR! Unable to copy assets: %v", err)
@@ -68,6 +78,7 @@ var buildCommand = &cobra.Command{
 
 func init() {
 	buildCommand.Flags().StringVarP(&destinationPath, "output", "o", "", "Directory to output files to")
+	buildCommand.Flags().BoolVarP(&cleanAssetDir, "clean", "c", false, "Clean the destination assets directory before building")
 
 	rootCmd.AddCommand(buildCommand)
 }
