@@ -7,23 +7,16 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-
-	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/parser"
 )
 
 // Load the contents of markdown file.
 func readMarkdownFile(filePath string) (string, error) {
-	markdownExtensions := parser.CommonExtensions
-	markdownParser := parser.NewWithExtensions(markdownExtensions)
-
 	contents, err := os.ReadFile(filePath)
 	if err != nil {
 		return "", err
 	}
-	htmlContents := markdown.ToHTML(contents, markdownParser, nil)
 
-	return string(htmlContents), nil
+	return RenderMarkdown(contents), nil
 }
 
 // Convert a relative path to an absolute path, relative to the current
