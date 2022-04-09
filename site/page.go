@@ -5,6 +5,8 @@ import (
 	"path"
 	"strings"
 	"text/template"
+
+	"brage/utils"
 )
 
 type Page struct {
@@ -25,8 +27,14 @@ func (page Page) Title() string {
 			"-", " "))
 }
 
-// Add the extra templates to the main template.
-func addTemplates(mainTemplate *template.Template, templateFiles map[string]string) error {
+// Add functions and extra templates to the main template.
+func addExtras(mainTemplate *template.Template, templateFiles map[string]string) error {
+	mainTemplate.Funcs(template.FuncMap{
+		"markdown": func(text string) string {
+			return utils.RenderMarkdown([]byte(text))
+		},
+	})
+
 	for name, content := range templateFiles {
 		subTemplate := mainTemplate.New(name)
 		_, err := subTemplate.Parse(content)
@@ -41,23 +49,21 @@ func addTemplates(mainTemplate *template.Template, templateFiles map[string]stri
 // Render a page using a specific site config and layout file.
 func (page Page) Render(site Site) (string, error) {
 	layoutTemplate := template.New("layout")
-	layoutTemplate, err := layoutTemplate.Parse(site.Layout)
+	err := addExtras(layoutTemplate, site.Templates)
 	if err != nil {
 		return "", err
 	}
-
-	err = addTemplates(layoutTemplate, site.Templates)
+	layoutTemplate, err = layoutTemplate.Parse(site.Layout)
 	if err != nil {
 		return "", err
 	}
 
 	pageTemplate := template.New("page")
-	pageTemplate, err = pageTemplate.Parse(page.Template)
+	err = addExtras(pageTemplate, site.Templates)
 	if err != nil {
 		return "", err
 	}
-
-	err = addTemplates(pageTemplate, site.Templates)
+	pageTemplate, err = pageTemplate.Parse(page.Template)
 	if err != nil {
 		return "", err
 	}

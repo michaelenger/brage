@@ -142,6 +142,12 @@ Would result in the following variables being present:
 In the `layout.html` file there also exists a `.Content` variable which has the
 contents of the current page.
 
+#### Functions
+
+The following functions are available when rendering templates:
+
+* `markdown [text]` Render HTML from Markdown text (note, this will wrap the resulting text in `<p></p>` tags)
+
 ### Layout
 
 The `layout.html` file defines the layout of the site and is used to wrap all pages.
