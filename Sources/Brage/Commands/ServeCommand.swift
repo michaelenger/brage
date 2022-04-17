@@ -6,7 +6,7 @@ extension Brage {
         static let configuration = CommandConfiguration(commandName: "serve")
 
         @Argument(help: "Site directory to serve")
-        var source: String?
+        var source: String = "."
 
         @Option(help: "Port to serve the site on")
         var port: Int = 8080

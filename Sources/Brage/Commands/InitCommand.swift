@@ -6,7 +6,7 @@ extension Brage {
         static let configuration = CommandConfiguration(commandName: "init")
 
         @Argument(help: "Directory in which to initialise the site")
-        var path: String?
+        var path: String = "."
 
         @Flag(help: "Overwrite anything in the path")
         var force: Bool = false

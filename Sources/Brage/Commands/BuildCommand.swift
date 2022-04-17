@@ -6,10 +6,10 @@ extension Brage {
         static let configuration = CommandConfiguration(commandName: "build")
 
         @Argument(help: "Site directory to build")
-        var source: String?
+        var source: String = "."
 
         @Option(help: "Path to output the files to")
-        var output: String?
+        var output: String = "./build"
 
         @Flag(help: "Delete any existing assets before building")
         var clean: Bool = false
