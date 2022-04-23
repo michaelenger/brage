@@ -10,13 +10,37 @@ final class SiteTests: XCTestCase {
             withIntermediateDirectories:true)
         FileManager.default.createFile(
             atPath: temporarySitePath.appendingPathComponent("config.yaml").path,
-            contents: "test".data(using: .utf8))
+            contents: """
+            ---
+            title: Test Site
+            description: This is just a test.
+            image: lol.png
+            root_url: https://example.org
+            data:
+              one: 1
+              two:
+                - 2
+                - 3
+            """.data(using: .utf8))
     }
 
     override func tearDownWithError() throws {
         if FileManager.default.fileExists(atPath: temporarySitePath.path) {
             try FileManager.default.removeItem(at: temporarySitePath)
         }
+    }
+    
+    func testConfig() throws {
+        let site = try Site(siteFromDirectory: temporarySitePath)
+        
+        let config = try site.config
+        
+        XCTAssertEqual(config.title, "Test Site")
+        XCTAssertEqual(config.description, "This is just a test.")
+        XCTAssertEqual(config.image, "lol.png")
+        XCTAssertEqual(config.rootUrl, "https://example.org")
+        XCTAssertEqual(config.data["one"] as! Int, 1)
+        XCTAssertEqual(config.data["two"] as! [Int], [2, 3])
     }
 
     func testInit() throws {
