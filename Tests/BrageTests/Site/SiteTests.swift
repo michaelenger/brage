@@ -7,7 +7,7 @@ final class SiteTests: XCTestCase {
     override func setUpWithError() throws {
         try FileManager.default.createDirectory(
             at: temporarySitePath,
-            withIntermediateDirectories:true)
+            withIntermediateDirectories: true)
         FileManager.default.createFile(
             atPath: temporarySitePath.appendingPathComponent("config.yaml").path,
             contents: """
@@ -22,6 +22,16 @@ final class SiteTests: XCTestCase {
                 - 2
                 - 3
             """.data(using: .utf8))
+        FileManager.default.createFile(
+            atPath: temporarySitePath.appendingPathComponent("layout.html").path,
+            contents: """
+            <html>
+            TODO
+            </html>
+            """.data(using: .utf8))
+        try FileManager.default.createDirectory(
+            at: temporarySitePath.appendingPathComponent("pages"),
+            withIntermediateDirectories: false)
     }
 
     override func tearDownWithError() throws {
@@ -61,6 +71,22 @@ final class SiteTests: XCTestCase {
 
         XCTAssertThrowsError(try Site(siteFromDirectory: temporarySitePath)) { (errorThrown) in
             XCTAssertEqual(errorThrown as? SiteError, SiteError.configFileMissing)
+        }
+    }
+    
+    func testInitMissingLayoutFile() throws {
+        try FileManager.default.removeItem(at: temporarySitePath.appendingPathComponent("layout.html"))
+
+        XCTAssertThrowsError(try Site(siteFromDirectory: temporarySitePath)) { (errorThrown) in
+            XCTAssertEqual(errorThrown as? SiteError, SiteError.layoutFileMissing)
+        }
+    }
+    
+    func testInitMissingPagesDirectory() throws {
+        try FileManager.default.removeItem(at: temporarySitePath.appendingPathComponent("pages"))
+
+        XCTAssertThrowsError(try Site(siteFromDirectory: temporarySitePath)) { (errorThrown) in
+            XCTAssertEqual(errorThrown as? SiteError, SiteError.pagesDirectoryMissing)
         }
     }
 }

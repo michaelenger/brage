@@ -5,6 +5,8 @@ import Yams
 enum SiteError: Error, Equatable {
     case configFileInvalid(String)
     case configFileMissing
+    case layoutFileMissing
+    case pagesDirectoryMissing
     case siteDirectoryInvalid
 }
 
@@ -15,6 +17,10 @@ extension SiteError: CustomStringConvertible {
             return "Invalid config file: \(reason)"
         case .configFileMissing:
             return "Missing config file."
+        case .layoutFileMissing:
+            return "Missing layout file."
+        case .pagesDirectoryMissing:
+            return "Missing pages directory."
         case .siteDirectoryInvalid:
             return "Provided site path is not a readable directory."
         }
@@ -64,14 +70,25 @@ struct Site {
         sourceDirectory = directory
 
         var isDirectory = ObjCBool(false)
-        let exists = FileManager.default.fileExists(atPath: sourceDirectory.path, isDirectory: &isDirectory)
+        var exists = FileManager.default.fileExists(atPath: sourceDirectory.path, isDirectory: &isDirectory)
         if !exists || !isDirectory.boolValue {
             throw SiteError.siteDirectoryInvalid
         }
 
-         let configFilePath = sourceDirectory.appendingPathComponent("config.yaml")
-         if !FileManager.default.fileExists(atPath: configFilePath.path) {
-             throw SiteError.configFileMissing
-         }
+        let configFilePath = sourceDirectory.appendingPathComponent("config.yaml")
+        if !FileManager.default.fileExists(atPath: configFilePath.path) {
+            throw SiteError.configFileMissing
+        }
+        
+        let layoutFilePath = sourceDirectory.appendingPathComponent("layout.html")
+        if !FileManager.default.fileExists(atPath: layoutFilePath.path) {
+            throw SiteError.layoutFileMissing
+        }
+        
+        let pagesDirectoryPath = sourceDirectory.appendingPathComponent("pages")
+        exists = FileManager.default.fileExists(atPath: pagesDirectoryPath.path, isDirectory: &isDirectory)
+        if !exists || !isDirectory.boolValue {
+            throw SiteError.pagesDirectoryMissing
+        }
     }
 }
