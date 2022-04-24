@@ -1,4 +1,5 @@
 import ArgumentParser
+import Foundation
 
 extension Brage {
     /// Command to initialise a site based on a template.
@@ -12,7 +13,9 @@ extension Brage {
         var force: Bool = false
 
         func run() {
-            print("INIT \(path) AND FORCE(\(force))")
+            let targetDirectory = URL(fileURLWithPath: path, isDirectory: true)
+
+            print("INIT \(targetDirectory) AND FORCE(\(force))")
         }
     }
 }

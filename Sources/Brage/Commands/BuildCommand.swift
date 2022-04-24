@@ -1,4 +1,5 @@
 import ArgumentParser
+import Foundation
 
 extension Brage {
     /// Command to build a site.
@@ -15,7 +16,10 @@ extension Brage {
         var clean: Bool = false
 
         func run() {
-            print("BUILD \(source) TO \(output) WITH CLEAN(\(clean))")
+            let sourceDirectory = URL(fileURLWithPath: source, isDirectory: true)
+            let site = try! Site(siteFromDirectory: sourceDirectory)
+
+            print("BUILD \(site) TO \(output) WITH CLEAN(\(clean))")
         }
     }
 }

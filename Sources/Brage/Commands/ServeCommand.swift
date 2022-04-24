@@ -1,4 +1,5 @@
 import ArgumentParser
+import Foundation
 
 extension Brage {
     /// Command to serve a site on a simple webserver.
@@ -12,7 +13,10 @@ extension Brage {
         var port: Int = 8080
 
         func run() {
-            print("SERVE \(source) ON \(port)")
+            let sourceDirectory = URL(fileURLWithPath: source, isDirectory: true)
+            let site = try! Site(siteFromDirectory: sourceDirectory)
+
+            print("SERVE \(site) ON \(port)")
         }
     }
 }
