@@ -32,6 +32,9 @@ final class SiteTests: XCTestCase {
         try FileManager.default.createDirectory(
             at: temporarySitePath.appendingPathComponent("pages"),
             withIntermediateDirectories: false)
+        FileManager.default.createFile(
+            atPath: temporarySitePath.appendingPathComponent("pages/index.html").path,
+            contents: "Text".data(using: .utf8))
     }
 
     override func tearDownWithError() throws {
