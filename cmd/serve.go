@@ -100,6 +100,13 @@ func (handler *siteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	target, exists := site.Config.Redirects[requestPath]
+	if exists {
+		handler.logger.Print("302 Found")
+		http.Redirect(w, r, target, http.StatusFound)
+		return
+	}
+
 	for _, page := range site.Pages {
 		if page.Path == requestPath {
 			content, err := page.Render(site)
