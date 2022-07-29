@@ -11,6 +11,9 @@ var testConfig = SiteConfig{
 	"This is just a test.",
 	"test.jpg",
 	"https://example.org/",
+	map[string]string{
+		"/example": "https://example.org/",
+	},
 	DataMap{
 		"Skills": []string{
 			"one", "two", "three",

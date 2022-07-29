@@ -70,6 +70,7 @@ It can contain the following fields:
 * `description` Site description
 * `image` Favicon
 * `rootUrl` The root URL of the site
+* `redirects` Map of URIs that should redirect to other URLs
 * `data` A map containing any optional data you want to use in the templates
 
 The contents of the config file is available in the templates under the `.Site` variable,
@@ -99,6 +100,7 @@ Contains site data as defined in the `config.yaml` file:
 * `.Site.Description` Site description
 * `.Site.Image` Favicon/social media image
 * `.Site.RootUrl` Root URL
+* `.Site.Redirects` Redirect map
 
 ##### Page
 

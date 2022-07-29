@@ -11,6 +11,8 @@ title: Young Fatigue
 description: New Single ‘Dislocation‘ Out Now!
 image: icon.png
 rootUrl: https://youngfatigue.com/
+redirects:
+  /example: https://example.org/
 
 data:
   instagram: https://www.instagram.com/youngfatigue/
@@ -134,6 +136,12 @@ func TestLoad(t *testing.T) {
 	}
 	if site.Config.RootUrl != "https://youngfatigue.com/" {
 		t.Fatalf("Incorrect site.Config.RootUrl: %v", site.Config.RootUrl)
+	}
+	if len(site.Config.Redirects) != 1 {
+		t.Fatalf("Incorrect site.Config.Redirects: %v", site.Config.Redirects)
+	}
+	if site.Config.Redirects["/example"] != "https://example.org/" {
+		t.Fatalf("Incorrect site.Config.Redirects[\"/example\"]: %v", site.Config.Redirects["/example"])
 	}
 	if site.SourceDirectory != dirPath {
 		t.Fatalf("Incorrect site.SourceDirectory: %v", site.SourceDirectory)

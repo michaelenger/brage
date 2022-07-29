@@ -29,6 +29,8 @@ func runInitCommand(cmd *cobra.Command, args []string) {
 description: This is my Brage site.
 image: dog.png
 rootUrl: https://example.org
+redirects:
+  /example: https://example.org/
 
 data:
   words:
