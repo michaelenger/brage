@@ -114,7 +114,7 @@ func (handler *siteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				handler.logger.Print("500 Server Error")
 				errorText := fmt.Sprintf("Unable to render page file: %v", err)
 				handler.logger.Print(errorText)
-				http.Error(w, errorText, 500)
+				http.Error(w, errorText, http.StatusInternalServerError)
 				return
 			}
 
