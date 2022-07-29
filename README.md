@@ -204,6 +204,14 @@ This is in the page.
 Assets are files in the `assets` subdirectory and are copied directly to an `assets`
 subdirectory in the target path when building the site.
 
+## Building
+
+To build a binary that can work as a part of a GitHub Actions pipeline you need to run the following command:
+
+```shell
+GOARCH=amd64 GOOS=linux go build
+```
+
 ## TODO
 
 Potential changes to the tool:
