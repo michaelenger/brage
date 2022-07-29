@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -55,6 +56,27 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 			logger.Fatalf("ERROR! Unable to copy assets: %v", err)
 		}
 		logger.Printf("Copied %v assets", assets)
+	}
+
+	for uri, targetUrl := range site.Config.Redirects {
+		filePath := path.Join(destinationPath, uri, "index.html")
+
+		content := fmt.Sprintf(`<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="refresh" content="0; url='%s'" />
+	</head>
+	<body>
+		<p>Sending you <a href="%s">here</a>.</p>
+	</body>
+</html>`, targetUrl, targetUrl)
+
+		err = utils.WriteFile(filePath, content)
+		if err != nil {
+			logger.Fatalf("ERROR! Unable to create redirect file: %v", err)
+		}
+
+		logger.Printf("Added redirect: %v => %v", uri, targetUrl)
 	}
 
 	for _, page := range site.Pages {
