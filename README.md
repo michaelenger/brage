@@ -3,8 +3,8 @@
 _Brage is the Norwegian name for the ancient norse god [Bragi](https://en.wikipedia.org/wiki/Bragi),
 the skaldic god of poetry._
 
-Brage is a simple static site generator written in [Go](https://go.dev/). It
-supports building pages using [Go templates](https://pkg.go.dev/text/template) and
+Brage is a simple static site generator written in [Swift](https://www.swift.org/). It
+supports building pages using [Stencil templates](https://stencil.fuller.li/) and
 [Markdown](https://www.markdownguide.org/).
 
 ## Usage
@@ -76,7 +76,7 @@ It can contain the following fields:
 The contents of the config file is available in the templates under the `.Site` variable,
 and anything defined in the `data` field is available under `.Data`:
 
-```gohtml
+```html
 Welcome to {{ .Site.Title }}.
 
 Here is my dog: {{ .Data.dog }}
@@ -84,7 +84,7 @@ Here is my dog: {{ .Data.dog }}
 
 ### Templates
 
-The HTML templates are all parsed as standard [Go text templates](https://pkg.go.dev/text/template)
+The HTML templates are all parsed as standard [Stencil templates](https://stencil.fuller.li/)
 and HTML is not escaped, so you are forewarned that the rendering isn't going to
 sanitise anything for you.
 
@@ -158,7 +158,7 @@ template variable.
 
 An example layout which doesn't add more than the site title would be as follows:
 
-```gohtml
+```html
 <head>
     <title>{{ .Page.Title }}</title>
 </head>
@@ -193,7 +193,7 @@ This is in the template.
 ```
 
 _/pages/index.html_
-```gohtml
+```html
 This is in the page.
 
 {{ template "extra" }}
@@ -203,14 +203,6 @@ This is in the page.
 
 Assets are files in the `assets` subdirectory and are copied directly to an `assets`
 subdirectory in the target path when building the site.
-
-## Building
-
-To build a binary that can work as a part of a GitHub Actions pipeline you need to run the following command:
-
-```shell
-GOARCH=amd64 GOOS=linux go build
-```
 
 ## TODO
 
