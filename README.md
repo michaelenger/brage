@@ -15,11 +15,11 @@ are built to work on a single source directory.
 ### Init
 
 ```shell
-brage init [PATH]
+brage init <target-path>
 ```
 
 `init` is used to initialise a new site and will create a bunch of files that can
-be used as a template when creating a new site. If no `PATH` is specified then it
+be used as a template when creating a new site. If no `<target-path>` is specified then it
 will generate the files in the current directory.
 
 #### Options
@@ -29,10 +29,10 @@ will generate the files in the current directory.
 ### Serve
 
 ```shell
-brage serve [PATH]
+brage serve <site-path>
 ```
 
-`serve` will serve the site specified in the `PATH` (or the current directory if
+`serve` will serve the site specified in the `<site-path>` (or the current directory if
 nothing is specified) on port `8080`. This can be used when developing or debugging
 the site.
 
@@ -43,17 +43,17 @@ the site.
 ### Build
 
 ```shell
-brage build [PATH]
+brage build <site-path>
 ```
 
 `build` builds the site, generating all the static HTML files and copying any assets
-to the appropriate location. It will read the site from the `PATH` location (or the
+to the appropriate location. It will read the site from the `<site-path>` location (or the
 current directory if nothing is specified) and store the generated files in a `build`
 subdirectory if no output path is specified.
 
 #### Options
 
-* `-o, --output` Path to output the site to
+* `-o, --output <output-path>` Path to output the site to
 * `-c, --clean` Override the output assets directory, removing anything already in there
 
 ## Building Sites
