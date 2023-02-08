@@ -5,5 +5,5 @@ import BrageCore
 struct Brage: ParsableCommand {
     static let configuration = CommandConfiguration(
         abstract: "Static site generator.",
-        subcommands: [Build.self, Init.self, Serve.self])
+        subcommands: [BuildCommand.self, NewCommand.self, ServeCommand.self])
 }

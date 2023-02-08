@@ -9,16 +9,16 @@ supports building pages using [Stencil templates](https://stencil.fuller.li/) an
 
 ## Usage
 
-Usage is based on three main commands, `init`, `serve`, and `build`, all of which
+Usage is based on three main commands, `new`, `serve`, and `build`, all of which
 are built to work on a single source directory.
 
-### Init
+### New
 
 ```shell
-brage init <target-path>
+brage new <target-path>
 ```
 
-`init` is used to initialise a new site and will create a bunch of files that can
+`new` is used to initialise a new site and will create a bunch of files that can
 be used as a template when creating a new site. If no `<target-path>` is specified then it
 will generate the files in the current directory.
 
