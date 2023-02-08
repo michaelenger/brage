@@ -1,5 +1,6 @@
 import ArgumentParser
 import BrageCore
+import Foundation
 
 @main
 struct Brage: ParsableCommand {
