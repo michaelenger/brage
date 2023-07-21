@@ -173,7 +173,7 @@ func TestLoadWithoutLayout(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	if site.Layout != "{{ .Content }}" {
+	if site.Layout != "{{{ content }}}" {
 		t.Fatalf("Incorrect site.Layout: %v", site.Layout)
 	}
 }

@@ -57,7 +57,7 @@ func Load(siteDirectory string) (Site, error) {
 
 	layoutPath := path.Join(siteDirectory, "layout.html")
 	if _, err := os.Stat(layoutPath); os.IsNotExist(err) {
-		site.Layout = "{{ .Content }}"
+		site.Layout = "{{{ content }}}"
 	} else {
 		contents, err = os.ReadFile(layoutPath)
 		if err != nil {

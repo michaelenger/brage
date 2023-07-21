@@ -144,12 +144,6 @@ Would result in the following variables being present:
 In the `layout.html` file you can also use the special command ```{{{content}}}```
 to output the contents of the current page.
 
-#### Functions
-
-The following functions are available when rendering templates:
-
-* `markdown [text]` Render HTML from Markdown text (note, this will wrap the resulting text in `<p></p>` tags)
-
 ### Layout
 
 The `layout.html` file defines the layout of the site and is used to wrap all pages.
@@ -217,3 +211,4 @@ Potential changes to the tool:
 
 * Remove any required items from the config file and just let the whole thing be in `.Data`?
 * Customise the path to the assets directory?
+* Support other file extensions: .md .htm .mustache
