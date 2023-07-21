@@ -4,8 +4,8 @@ _Brage is the Norwegian name for the ancient norse god [Bragi](https://en.wikipe
 the skaldic god of poetry._
 
 Brage is a simple static site generator written in [Go](https://go.dev/). It
-supports building pages using [Go templates](https://pkg.go.dev/text/template) and
-[Markdown](https://www.markdownguide.org/).
+supports building pages and posts using [mustache](https://mustache.github.io/)
+and [Markdown](https://www.markdownguide.org/) templates.
 
 ## Usage
 
@@ -56,8 +56,6 @@ subdirectory if no output path is specified.
 * `-o, --output` Path to output the site to
 * `-c, --clean` Override the output assets directory, removing anything already in there
 
-# WARNING: THE FOLLOWING IS SUBJECT TO CHANGE
-
 ## Building Sites
 
 Sites are defined with a config [YAML](https://yaml.org/) file, an optional layout
@@ -71,17 +69,17 @@ It can contain the following fields:
 * `title` The site title
 * `description` Site description
 * `image` Favicon
-* `rootUrl` The root URL of the site
+* `root_url` The root URL of the site
 * `redirects` Map of URIs that should redirect to other URLs
 * `data` A map containing any optional data you want to use in the templates
 
-The contents of the config file is available in the templates under the `.Site` variable,
-and anything defined in the `data` field is available under `.Data`:
+The contents of the config file is available in the templates under the `site` variable,
+and anything defined in the `data` field is available under `data`:
 
 ```gohtml
-Welcome to {{ .Site.Title }}.
+Welcome to {{ site.Title }}.
 
-Here is my dog: {{ .Data.dog }}
+Here is my dog: {{ data.dog }}
 ```
 
 ### Templates
@@ -98,25 +96,25 @@ The following variables are passed into the template and are available:
 
 Contains site data as defined in the `config.yaml` file:
 
-* `.Site.Title` Site title
-* `.Site.Description` Site description
-* `.Site.Image` Favicon/social media image
-* `.Site.RootUrl` Root URL
-* `.Site.Redirects` Redirect map
+* `site.title` Site title
+* `site.description` Site description
+* `site.image` Favicon/social media image
+* `site.root_url` Root URL
+* `site.redirects` Redirect map
 
 ##### Page
 
 Contains information about the current page:
 
-* `.Page.Path` Path to the page
-* `.Page.Template` Contents of the page template
-* `.Page.Title` Automatically inferred title based on the path
+* `page.path` Path to the page
+* `page.template` Contents of the page template
+* `page.title` Automatically inferred title based on the path
 
 The title for the root path is `"Home"`
 
 ##### Data
 
-The `.Data` variable contains all the variables which were added in the `data` field
+The `data` variable contains all the variables which were added in the `data` field
 in the `config.yaml` file. For example, the following config:
 
 ```yaml
@@ -137,14 +135,14 @@ data:
 
 Would result in the following variables being present:
 
-* `.Data.bananas` An array of strings
-* `.Data.explosions` The string "all over the place"
-* `.Data.best_numbers` An array of the best numbers containing maps
+* `data.bananas` An array of strings
+* `data.explosions` The string "all over the place"
+* `data.best_numbers` An array of the best numbers containing maps
 
 ##### Content
 
-In the `layout.html` file there also exists a `.Content` variable which has the
-contents of the current page.
+In the `layout.html` file you can also use the special command ```{{{content}}}```
+to output the contents of the current page.
 
 #### Functions
 
@@ -155,17 +153,17 @@ The following functions are available when rendering templates:
 ### Layout
 
 The `layout.html` file defines the layout of the site and is used to wrap all pages.
-When a page is generated its contents are stored and made available in the `.Content`
+When a page is generated its contents are stored and made available in the `content`
 template variable.
 
 An example layout which doesn't add more than the site title would be as follows:
 
 ```gohtml
 <head>
-    <title>{{ .Page.Title }}</title>
+    <title>{{ page.title }}</title>
 </head>
 <body>
-    {{ .Content }}
+    {{{ content }}}
 </body>
 ```
 
@@ -183,13 +181,12 @@ for any template named `index` which will have no name.
 * `/pages/sub/index.html` => `/sub`
 * `/pages/sub/sub/page.html` => `/sub/sub/page`
 
-### Extra Templates
+### Partials
 
-Any files present in the `templates` subdirectory will be available using their name
-in any page templates using the `template` function. Their name is their path relative
-to the `templates` directory without the file extension.
+Any files present in the `partials` subdirectory will be available using their name
+with the partial syntax:
 
-_/templates/extra.markdown_
+_/partials/extra.markdown_
 ```markdown
 This is in the template.
 ```
@@ -198,7 +195,7 @@ _/pages/index.html_
 ```gohtml
 This is in the page.
 
-{{ template "extra" }}
+{{> extra }}
 ```
 
 ### Assets
