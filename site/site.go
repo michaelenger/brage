@@ -25,7 +25,7 @@ type Site struct {
 	SourceDirectory string
 	Layout          string
 	Pages           []Page
-	Templates       map[string]string
+	Partials        map[string]string
 }
 
 // Load the site config based on a specified path and build the site description.
@@ -86,19 +86,19 @@ func Load(siteDirectory string) (Site, error) {
 		site.Pages = append(site.Pages, Page{name, template})
 	}
 
-	// Templates
+	// Partials
 
-	templatesPath := path.Join(siteDirectory, "templates")
-	templatesFileInfo, err := os.Stat(templatesPath)
-	if err != nil || !templatesFileInfo.IsDir() {
+	partialsPath := path.Join(siteDirectory, "partials")
+	partialsFileInfo, err := os.Stat(partialsPath)
+	if err != nil || !partialsFileInfo.IsDir() {
 		return site, nil
 	}
 
-	templates, err := utils.LoadTemplateFiles(templatesPath, "")
+	partials, err := utils.LoadTemplateFiles(partialsPath, "")
 	if err != nil {
 		return site, err
 	}
-	site.Templates = templates
+	site.Partials = partials
 
 	return site, nil
 }

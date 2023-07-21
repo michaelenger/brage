@@ -82,18 +82,18 @@ func createExampleSite(t *testing.T) string {
 	}
 	pageFile.Close()
 
-	// Templates
-	templatesPath := path.Join(temporaryDirectory, "templates")
-	err = os.Mkdir(templatesPath, 0755)
+	// Partials
+	partialsPath := path.Join(temporaryDirectory, "partials")
+	err = os.Mkdir(partialsPath, 0755)
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
-	templateFile, err := os.Create(path.Join(templatesPath, "one.html"))
+	templateFile, err := os.Create(path.Join(partialsPath, "one.html"))
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
 	templateFile.Close()
-	templateFile, err = os.Create(path.Join(templatesPath, "something.markdown"))
+	templateFile, err = os.Create(path.Join(partialsPath, "something.markdown"))
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
@@ -102,7 +102,7 @@ func createExampleSite(t *testing.T) string {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
 	templateFile.Close()
-	subTemplatesPath := path.Join(templatesPath, "sub")
+	subTemplatesPath := path.Join(partialsPath, "sub")
 	err = os.Mkdir(subTemplatesPath, 0755)
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
@@ -155,8 +155,8 @@ func TestLoad(t *testing.T) {
 	if len(site.Pages) != 4 {
 		t.Fatalf("Incorrect site.Pages: %v", site.Pages)
 	}
-	if len(site.Templates) != 3 {
-		t.Fatalf("Incorrect site.Templates: %v", site.Templates)
+	if len(site.Partials) != 3 {
+		t.Fatalf("Incorrect site.Partials: %v", site.Partials)
 	}
 }
 
@@ -175,10 +175,10 @@ func TestLoadWithoutLayout(t *testing.T) {
 	}
 }
 
-func TestLoadWithoutTemplates(t *testing.T) {
+func TestLoadWithoutPartials(t *testing.T) {
 	dirPath := createExampleSite(t)
 	defer os.RemoveAll(dirPath)
-	os.RemoveAll(path.Join(dirPath, "templates"))
+	os.RemoveAll(path.Join(dirPath, "partials"))
 
 	_, err := Load(dirPath)
 	if err != nil {

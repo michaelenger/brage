@@ -27,15 +27,15 @@ func (page Page) Title() string {
 			"-", " "))
 }
 
-// Add functions and extra templates to the main template.
-func addExtras(mainTemplate *template.Template, templateFiles map[string]string) error {
+// Add functions and partial templates to the main template.
+func addPartials(mainTemplate *template.Template, partials map[string]string) error {
 	mainTemplate.Funcs(template.FuncMap{
 		"markdown": func(text string) string {
 			return utils.RenderMarkdown([]byte(text))
 		},
 	})
 
-	for name, content := range templateFiles {
+	for name, content := range partials {
 		subTemplate := mainTemplate.New(name)
 		_, err := subTemplate.Parse(content)
 		if err != nil {
@@ -49,7 +49,7 @@ func addExtras(mainTemplate *template.Template, templateFiles map[string]string)
 // Render a page using a specific site config and layout file.
 func (page Page) Render(site Site) (string, error) {
 	layoutTemplate := template.New("layout")
-	err := addExtras(layoutTemplate, site.Templates)
+	err := addPartials(layoutTemplate, site.Partials)
 	if err != nil {
 		return "", err
 	}
@@ -59,7 +59,7 @@ func (page Page) Render(site Site) (string, error) {
 	}
 
 	pageTemplate := template.New("page")
-	err = addExtras(pageTemplate, site.Templates)
+	err = addPartials(pageTemplate, site.Partials)
 	if err != nil {
 		return "", err
 	}
