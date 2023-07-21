@@ -56,6 +56,8 @@ subdirectory if no output path is specified.
 * `-o, --output` Path to output the site to
 * `-c, --clean` Override the output assets directory, removing anything already in there
 
+# WARNING: THE FOLLOWING IS SUBJECT TO CHANGE
+
 ## Building Sites
 
 Sites are defined with a config [YAML](https://yaml.org/) file, an optional layout
