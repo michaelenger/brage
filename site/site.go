@@ -15,7 +15,7 @@ type SiteConfig struct {
 	Title       string
 	Description string
 	Image       string
-	RootUrl     string `yaml:"rootUrl"`
+	RootUrl     string `yaml:"root_url"`
 	Redirects   map[string]string
 	Data        DataMap
 }

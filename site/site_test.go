@@ -10,13 +10,13 @@ var exampleConfig = `
 title: Young Fatigue
 description: New Single ‘Dislocation‘ Out Now!
 image: icon.png
-rootUrl: https://youngfatigue.com/
+root_url: https://youngfatigue.com/
 redirects:
   /example: https://example.org/
 
 data:
   instagram: https://www.instagram.com/youngfatigue/
-  quotes:
+  cool_quotes:
     - It’s actually really good... really good.
     - "[Dislocation] is super fun!"
 `
@@ -150,7 +150,10 @@ func TestLoad(t *testing.T) {
 		t.Fatalf("Incorrect site.Layout: %v", site.Layout)
 	}
 	if site.Config.Data["instagram"] != "https://www.instagram.com/youngfatigue/" {
-		t.Fatalf("Incorrect site.Config.Data: %v", site.Config.Data)
+		t.Fatalf("Incorrect site.Config.Data[\"instagram\"]: %v", site.Config.Data["instagram"])
+	}
+	if site.Config.Data["cool_quotes"].([]interface{})[1] != "[Dislocation] is super fun!" {
+		t.Fatalf("Incorrect site.Config.Data[\"cool_quotes\"]: %v", site.Config.Data["cool_quotes"])
 	}
 	if len(site.Pages) != 4 {
 		t.Fatalf("Incorrect site.Pages: %v", site.Pages)
