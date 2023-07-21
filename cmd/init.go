@@ -9,6 +9,63 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const ABOUT_TEMPLATE = `This is the about page.
+
+[Home](/)
+`
+
+const CONFIG_TEMPLATE = `title: My Site
+description: This is my Brage site.
+image: dog.png
+root_url: https://example.org
+redirects:
+  /example: https://example.org/
+
+data:
+  words:
+    - banana
+    - happy
+    - explosion
+`
+
+const EXTRA_TEMPLATE = `<ul>
+{{ #data.words }}
+<li>{{ . }}</li>
+{{ /data.words }}
+</ul>
+`
+
+const FIRST_TEMPLATE = `title: First Post
+date: 2023-07-21
+---
+This is my **first** post!
+`
+
+const INDEX_TEMPLATE = `<p>This is the main page.</p>
+{{ > extra }}
+<a href="/about">About</a>
+`
+
+const LAYOUT_TEMPLATE = `<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/assets/style.css">
+<title>{{ site.title }}</title>
+</head>
+
+<body>
+<h1>{{ site.title }}</h1>
+{{{ content }}}
+</body>
+</html>
+`
+
+const STYLE_TEMPLATE = `body {
+background: #eee;
+color: #222;
+font-family: Helvetica, sans-serif;
+}`
+
 var overwriteFiles bool
 
 func runInitCommand(cmd *cobra.Command, args []string) {
@@ -25,51 +82,13 @@ func runInitCommand(cmd *cobra.Command, args []string) {
 	logger.Printf("Creating site in: %v", targetPath)
 
 	files := map[string]string{
-		"config.yaml": `title: My Site
-description: This is my Brage site.
-image: dog.png
-rootUrl: https://example.org
-redirects:
-  /example: https://example.org/
-
-data:
-  words:
-    - banana
-    - happy
-    - explosion
-`,
-		"layout.html": `<!DOCTYPE html>
-<html>
-<head>
-<link rel="stylesheet" type="text/css" href="/assets/style.css">
-<title>{{ .Site.Title }}</title>
-</head>
-
-<body>
-<h1>{{ .Site.Title }}</h1>
-{{ .Content }}
-</body>
-</html>
-`,
-		"assets/style.css": `body {
-background: #eee;
-color: #222;
-font-family: Helvetica, sans-serif;
-}`,
-		"pages/index.html": `<p>This is the main page.</p>
-{{ template "extra" . }}
-<a href="/about">About</a>
-`,
-		"pages/about.markdown": `This is the about page.
-
-[Home](/)
-`,
-		"templates/extra.html": `<ul>
-{{ range .Data.words }}
-<li>{{ . }}</li>
-{{ end }}
-</ul>
-`,
+		"config.yaml":          CONFIG_TEMPLATE,
+		"layout.html":          LAYOUT_TEMPLATE,
+		"assets/style.css":     STYLE_TEMPLATE,
+		"pages/index.html":     INDEX_TEMPLATE,
+		"pages/about.markdown": ABOUT_TEMPLATE,
+		"posts/first.html":     FIRST_TEMPLATE,
+		"partials/extra.html":  EXTRA_TEMPLATE,
 	}
 
 	for filePath, contents := range files {
