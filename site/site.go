@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 
+	"brage/files"
 	"brage/utils"
 	"gopkg.in/yaml.v2"
 )
@@ -73,20 +74,34 @@ func Load(siteDirectory string) (Site, error) {
 		return site, fmt.Errorf("No pages found at specified path: %v", pagesPath)
 	}
 
-	pages, err := utils.LoadTemplateFiles(pagesPath, "/")
+	pageFiles, err := files.ReadFiles(pagesPath, "/")
 	if err != nil {
 		return site, err
 	}
 
 	site.SourceDirectory = siteDirectory
-	for name, template := range pages {
+	for name, file := range pageFiles {
 		if path.Base(name) == "index" {
 			name = path.Clean(name[:len(name)-5])
 		}
+
+		var template string
+		switch file.Type {
+		case files.MarkdownFile:
+			template = utils.RenderMarkdown(file.Content)
+		default:
+			template = string(file.Content)
+		}
+		if file.Type == files.MarkdownFile {
+
+		}
+
 		site.Pages = append(site.Pages, Page{name, template})
 	}
 
 	// Partials
+
+	site.Partials = map[string]string{}
 
 	partialsPath := path.Join(siteDirectory, "partials")
 	partialsFileInfo, err := os.Stat(partialsPath)
@@ -94,11 +109,28 @@ func Load(siteDirectory string) (Site, error) {
 		return site, nil
 	}
 
-	partials, err := utils.LoadTemplateFiles(partialsPath, "")
+	partialFiles, err := files.ReadFiles(partialsPath, "")
 	if err != nil {
 		return site, err
 	}
-	site.Partials = partials
+	for name, file := range partialFiles {
+		if path.Base(name) == "index" {
+			name = path.Clean(name[:len(name)-5])
+		}
+
+		var template string
+		switch file.Type {
+		case files.MarkdownFile:
+			template = utils.RenderMarkdown(file.Content)
+		default:
+			template = string(file.Content)
+		}
+		if file.Type == files.MarkdownFile {
+
+		}
+
+		site.Partials[name] = template
+	}
 
 	return site, nil
 }

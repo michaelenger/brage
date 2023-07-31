@@ -97,59 +97,6 @@ func CopyFile(source string, destination string) error {
 	return err
 }
 
-// Recursively build a list of template files and returns a map of their name to their content.
-func LoadTemplateFiles(directoryPath string, prefixPath string) (map[string]string, error) {
-	pages := map[string]string{}
-
-	files, err := os.ReadDir(directoryPath)
-	if err != nil {
-		return pages, err
-	}
-
-	for _, file := range files {
-		filename := file.Name()
-		if filename[0] == '.' {
-			continue
-		}
-
-		fullPath := path.Join(directoryPath, filename)
-
-		if file.IsDir() {
-			subpages, err := LoadTemplateFiles(fullPath, path.Join(prefixPath, filename))
-			if err != nil {
-				return pages, err
-			}
-			for page, file := range subpages {
-				pages[page] = file
-			}
-
-			continue
-		}
-
-		fileExtension := filepath.Ext(filename)
-		var templateContents string
-		if fileExtension == ".html" {
-			contents, err := os.ReadFile(fullPath)
-			if err != nil {
-				return pages, err
-			}
-			templateContents = string(contents)
-		} else if fileExtension == ".markdown" {
-			templateContents, err = readMarkdownFile(fullPath)
-			if err != nil {
-				return pages, err
-			}
-		} else {
-			continue
-		}
-
-		templateName := path.Join(prefixPath, filename[:len(filename)-len(fileExtension)])
-		pages[templateName] = templateContents
-	}
-
-	return pages, nil
-}
-
 // Write the contents of the string to a file.
 func WriteFile(targetFilePath string, contents string) error {
 	targetDirectory := path.Dir(targetFilePath)
