@@ -6,7 +6,6 @@ import (
 	"path"
 
 	"brage/files"
-	"brage/utils"
 	"gopkg.in/yaml.v2"
 )
 
@@ -88,7 +87,7 @@ func Load(siteDirectory string) (Site, error) {
 		var template string
 		switch file.Type {
 		case files.MarkdownFile:
-			template = utils.RenderMarkdown(file.Content)
+			template = files.RenderMarkdown(file.Content)
 		default:
 			template = string(file.Content)
 		}
@@ -121,7 +120,7 @@ func Load(siteDirectory string) (Site, error) {
 		var template string
 		switch file.Type {
 		case files.MarkdownFile:
-			template = utils.RenderMarkdown(file.Content)
+			template = files.RenderMarkdown(file.Content)
 		default:
 			template = string(file.Content)
 		}

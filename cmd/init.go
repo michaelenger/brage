@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"brage/utils"
+	"brage/files"
 	"github.com/spf13/cobra"
 )
 
@@ -77,11 +77,11 @@ func runInitCommand(cmd *cobra.Command, args []string) {
 	} else {
 		targetPath = "."
 	}
-	targetPath = utils.AbsolutePath(targetPath)
+	targetPath = files.AbsolutePath(targetPath)
 
 	logger.Printf("Creating site in: %v", targetPath)
 
-	files := map[string]string{
+	siteFiles := map[string]string{
 		"config.yaml":          CONFIG_TEMPLATE,
 		"layout.html":          LAYOUT_TEMPLATE,
 		"assets/style.css":     STYLE_TEMPLATE,
@@ -91,7 +91,7 @@ func runInitCommand(cmd *cobra.Command, args []string) {
 		"partials/extra.html":  EXTRA_TEMPLATE,
 	}
 
-	for filePath, contents := range files {
+	for filePath, contents := range siteFiles {
 		fullPath := path.Join(targetPath, filePath)
 
 		if err := os.MkdirAll(path.Dir(fullPath), 0755); err != nil {
@@ -104,7 +104,7 @@ func runInitCommand(cmd *cobra.Command, args []string) {
 			}
 		}
 
-		if err := utils.WriteFile(fullPath, contents); err != nil {
+		if err := files.WriteFile(fullPath, contents); err != nil {
 			logger.Fatalf("ERROR! Unable to create file: %v", err)
 		}
 

@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"brage/files"
 	"brage/site"
-	"brage/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -34,7 +34,7 @@ func runServeCommand(cmd *cobra.Command, args []string) {
 	} else {
 		sourcePath = "."
 	}
-	sourcePath = utils.AbsolutePath(sourcePath)
+	sourcePath = files.AbsolutePath(sourcePath)
 
 	logger.Printf("Loading site from: %v", sourcePath)
 
