@@ -23,29 +23,6 @@ var testConfig = SiteConfig{
 
 var whitespacePattern = regexp.MustCompile(`\s`)
 
-func TestPageTitle(t *testing.T) {
-	var tests map[string]string = map[string]string{
-		"/":               "Home",
-		"/about":          "About",
-		"/this-is-a-test": "This Is A Test",
-		"/one/two/three":  "Three",
-	}
-
-	var page Page
-	var result string
-
-	for path, expected := range tests {
-		page = Page{
-			path,
-			"",
-		}
-		result = page.Title()
-		if result != expected {
-			t.Fatalf("Result:\n%v\nExpected:\n%v", result, expected)
-		}
-	}
-}
-
 func TestPageRender(t *testing.T) {
 	temporaryDirectory, err := os.MkdirTemp("", "examplesite")
 	if err != nil {

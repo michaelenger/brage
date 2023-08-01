@@ -1,28 +1,13 @@
 package site
 
 import (
-	"path"
-	"strings"
-
+	"brage/files"
 	"github.com/cbroglie/mustache"
 )
 
 type Page struct {
 	Path     string
 	Template string
-}
-
-// Get the title of a page.
-func (page Page) Title() string {
-	if page.Path == "/" {
-		return "Home"
-	}
-
-	return strings.Title(
-		strings.ReplaceAll(
-			strings.ReplaceAll(
-				path.Base(page.Path), "_", " "),
-			"-", " "))
 }
 
 // Create the context used when rendering a page.
@@ -38,7 +23,7 @@ func (page Page) makeContext(site Site) map[string]interface{} {
 	pageContext := map[string]string{
 		"path":     page.Path,
 		"template": page.Template,
-		"title":    page.Title(),
+		"title":    files.PathToTitle(page.Path),
 	}
 
 	return map[string]interface{}{

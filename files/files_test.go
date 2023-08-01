@@ -7,6 +7,24 @@ import (
 	"testing"
 )
 
+func TestPathToTitle(t *testing.T) {
+	var tests map[string]string = map[string]string{
+		"/":               "Home",
+		"/about":          "About",
+		"/this-is-a-test": "This Is A Test",
+		"/one/two/three":  "Three",
+	}
+
+	var result string
+
+	for filePath, expected := range tests {
+		result = PathToTitle(filePath)
+		if result != expected {
+			t.Fatalf("Result:\n%v\nExpected:\n%v", result, expected)
+		}
+	}
+}
+
 func TestReadFiles(t *testing.T) {
 	test_files := map[string]string{
 		".hidden.html":       "",

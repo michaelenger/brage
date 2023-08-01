@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 // A file type.
@@ -100,6 +101,22 @@ func CopyFile(source string, destination string) error {
 
 	_, err = io.Copy(destinationFile, sourceFile)
 	return err
+}
+
+// Convert a path into a page/post title.
+func PathToTitle(filePath string) string {
+	if filePath == "/" {
+		return "Home"
+	}
+
+	base := path.Base(filePath)
+	extension := filepath.Ext(base)
+	name := base[:len(base)-len(extension)]
+
+	return strings.Title(
+		strings.ReplaceAll(
+			strings.ReplaceAll(name, "_", " "),
+			"-", " "))
 }
 
 // Recursively read files and returns a map of their path to their content, relative to the directory path.
