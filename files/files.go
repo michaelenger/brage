@@ -24,16 +24,6 @@ type File struct {
 	Content []byte
 }
 
-// Load the contents of markdown file.
-func readMarkdownFile(filePath string) (string, error) {
-	contents, err := os.ReadFile(filePath)
-	if err != nil {
-		return "", err
-	}
-
-	return RenderMarkdown(contents), nil
-}
-
 // Convert a relative path to an absolute path, relative to the current
 // working directory.
 func AbsolutePath(relativePath string) string {
