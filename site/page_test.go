@@ -68,6 +68,7 @@ func TestPageRender(t *testing.T) {
 		map[string]string{
 			"temp": `<em>This is from a template</em>`,
 		},
+		[]Post{},
 	}
 
 	result, err := page.Render(site)

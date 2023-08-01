@@ -26,6 +26,48 @@ type Site struct {
 	Layout          string
 	Pages           []Page
 	Partials        map[string]string
+	Posts           []Post
+}
+
+// Load partials from the given directory.
+func loadPartials(dirPath string) (map[string]string, error) {
+	partials := map[string]string{}
+
+	partialsFileInfo, err := os.Stat(dirPath)
+	if err != nil || !partialsFileInfo.IsDir() {
+		return partials, nil
+	}
+
+	partialFiles, err := files.ReadFiles(dirPath, "")
+	if err != nil {
+		return partials, err
+	}
+	for name, file := range partialFiles {
+		if path.Base(name) == "index" {
+			name = path.Clean(name[:len(name)-5])
+		}
+
+		partials[name] = file.Render()
+	}
+
+	return partials, nil
+}
+
+// Load posts from the given directory.
+func loadPosts(dirPath string) []Post {
+	posts := []Post{}
+
+	postsFileInfo, err := os.Stat(dirPath)
+	if err != nil || !postsFileInfo.IsDir() {
+		return posts
+	}
+
+	postFiles, err := files.ReadFiles(dirPath, "")
+	for _, file := range postFiles {
+		posts = append(posts, MakePost(file, "/blog"))
+	}
+
+	return posts
 }
 
 // Load the site config based on a specified path and build the site description.
@@ -84,52 +126,21 @@ func Load(siteDirectory string) (Site, error) {
 			name = path.Clean(name[:len(name)-5])
 		}
 
-		var template string
-		switch file.Type {
-		case files.MarkdownFile:
-			template = files.RenderMarkdown(file.Content)
-		default:
-			template = string(file.Content)
-		}
-		if file.Type == files.MarkdownFile {
-
-		}
+		template := file.Render()
 
 		site.Pages = append(site.Pages, Page{name, template})
 	}
 
 	// Partials
 
-	site.Partials = map[string]string{}
-
-	partialsPath := path.Join(siteDirectory, "partials")
-	partialsFileInfo, err := os.Stat(partialsPath)
-	if err != nil || !partialsFileInfo.IsDir() {
-		return site, nil
-	}
-
-	partialFiles, err := files.ReadFiles(partialsPath, "")
+	site.Partials, err = loadPartials(path.Join(siteDirectory, "partials"))
 	if err != nil {
 		return site, err
 	}
-	for name, file := range partialFiles {
-		if path.Base(name) == "index" {
-			name = path.Clean(name[:len(name)-5])
-		}
 
-		var template string
-		switch file.Type {
-		case files.MarkdownFile:
-			template = files.RenderMarkdown(file.Content)
-		default:
-			template = string(file.Content)
-		}
-		if file.Type == files.MarkdownFile {
+	// Posts
 
-		}
-
-		site.Partials[name] = template
-	}
+	site.Posts = loadPosts(path.Join(siteDirectory, "posts"))
 
 	return site, nil
 }

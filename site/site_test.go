@@ -113,6 +113,23 @@ func createExampleSite(t *testing.T) string {
 	}
 	templateFile.Close()
 
+	// Posts
+	postsPath := path.Join(temporaryDirectory, "posts")
+	err = os.Mkdir(postsPath, 0755)
+	if err != nil {
+		t.Fatalf("Unable to create example site: %v", err)
+	}
+	templateFile, err = os.Create(path.Join(postsPath, "test.markdown"))
+	if err != nil {
+		t.Fatalf("Unable to create example site: %v", err)
+	}
+	templateFile.Close()
+	templateFile, err = os.Create(path.Join(postsPath, "something-else.markdown"))
+	if err != nil {
+		t.Fatalf("Unable to create example site: %v", err)
+	}
+	templateFile.Close()
+
 	return temporaryDirectory
 }
 
@@ -160,6 +177,9 @@ func TestLoad(t *testing.T) {
 	}
 	if len(site.Partials) != 3 {
 		t.Fatalf("Incorrect site.Partials: %v", site.Partials)
+	}
+	if len(site.Posts) != 2 {
+		t.Fatalf("Incorrect site.Posts: %v", site.Posts)
 	}
 }
 

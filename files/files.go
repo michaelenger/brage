@@ -25,6 +25,16 @@ type File struct {
 	Content []byte
 }
 
+// Render the file.
+func (f File) Render() string {
+	switch f.Type {
+	case MarkdownFile:
+		return RenderMarkdown(f.Content)
+	default:
+		return string(f.Content)
+	}
+}
+
 // Convert a relative path to an absolute path, relative to the current
 // working directory.
 func AbsolutePath(relativePath string) string {
