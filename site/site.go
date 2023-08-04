@@ -144,3 +144,14 @@ func Load(siteDirectory string) (Site, error) {
 
 	return site, nil
 }
+
+// Make the site context used when rendering pages and posts.
+func (site Site) MakeContext() map[string]interface{} {
+	return map[string]interface{}{
+		"title":       site.Config.Title,
+		"description": site.Config.Description,
+		"image":       site.Config.Image,
+		"root_url":    site.Config.RootUrl,
+		"redirects":   site.Config.Redirects,
+	}
+}

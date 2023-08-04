@@ -12,14 +12,6 @@ type Page struct {
 
 // Create the context used when rendering a page.
 func (page Page) makeContext(site Site) map[string]interface{} {
-	siteContext := map[string]interface{}{
-		"title":       site.Config.Title,
-		"description": site.Config.Description,
-		"image":       site.Config.Image,
-		"root_url":    site.Config.RootUrl,
-		"redirects":   site.Config.Redirects,
-	}
-
 	pageContext := map[string]string{
 		"path":     page.Path,
 		"template": page.Template,
@@ -27,7 +19,7 @@ func (page Page) makeContext(site Site) map[string]interface{} {
 	}
 
 	return map[string]interface{}{
-		"site": siteContext,
+		"site": site.MakeContext(),
 		"page": pageContext,
 		"data": site.Config.Data,
 	}
