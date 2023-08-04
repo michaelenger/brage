@@ -21,9 +21,9 @@ var testConfig = SiteConfig{
 	},
 }
 
-var whitespacePattern = regexp.MustCompile(`\s`)
-
 func TestPageRender(t *testing.T) {
+	var whitespacePattern = regexp.MustCompile(`\s`)
+
 	temporaryDirectory, err := os.MkdirTemp("", "examplesite")
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
