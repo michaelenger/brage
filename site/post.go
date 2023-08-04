@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"brage/files"
+	"github.com/cbroglie/mustache"
 )
 
 // A blog post.
@@ -15,7 +16,7 @@ type Post struct {
 	Title         string
 	Tags          []string
 	PublishedDate time.Time
-	Content       string
+	Template      string
 }
 
 // Make a post out the given File.
@@ -59,4 +60,30 @@ func MakePost(file files.File, pathPrefix string) Post {
 		publishedDate,
 		content,
 	}
+}
+
+// Create the context used when rendering the post.
+func (post Post) makeContext(site Site) map[string]interface{} {
+	postContext := map[string]interface{}{
+		"path":           post.Path,
+		"template":       post.Template,
+		"title":          post.Title,
+		"published_date": post.PublishedDate.Format("2006-01-02"),
+		"tags":           post.Tags,
+	}
+
+	return map[string]interface{}{
+		"site": site.MakeContext(),
+		"post": postContext,
+		"data": site.Config.Data,
+	}
+}
+
+// Render a post using a specific site config and layout file.
+func (post Post) Render(site Site) (string, error) {
+	context := post.makeContext(site)
+
+	partialsProvider := &mustache.StaticProvider{site.Partials}
+
+	return mustache.RenderInLayoutPartials(post.Template, site.Layout, partialsProvider, context)
 }
