@@ -3,7 +3,6 @@ package site
 import (
 	"log"
 	"path"
-	"strings"
 	"time"
 
 	"brage/files"
@@ -14,7 +13,6 @@ import (
 type Post struct {
 	Path          string
 	Title         string
-	Tags          []string
 	PublishedDate time.Time
 	Template      string
 }
@@ -35,13 +33,6 @@ func MakePost(file files.File, pathPrefix string) Post {
 		title = val.(string)
 	}
 
-	tags := []string{}
-	if val, ok := metadata["tags"]; ok {
-		for _, tag := range strings.Split(val.(string), " ") {
-			tags = append(tags, strings.ToLower(tag))
-		}
-	}
-
 	publishedDate := time.Now()
 	if val, ok := metadata["published_date"]; ok {
 		parsedTime, err := time.Parse("2006-01-02", val.(string))
@@ -56,7 +47,6 @@ func MakePost(file files.File, pathPrefix string) Post {
 	return Post{
 		path.Join(pathPrefix, files.FileName(file.Path)),
 		title,
-		tags,
 		publishedDate,
 		content,
 	}
@@ -69,7 +59,6 @@ func (post Post) makeContext(site Site) map[string]interface{} {
 		"template":       post.Template,
 		"title":          post.Title,
 		"published_date": post.PublishedDate.Format("2006-01-02"),
-		"tags":           post.Tags,
 	}
 
 	return map[string]interface{}{

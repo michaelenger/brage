@@ -14,7 +14,6 @@ func TestMakePost(t *testing.T) {
 		"/tmp/test.md",
 		[]byte(`---
 title: Testing!
-tags: one two
 published_date: 2020-10-01
 ---
 
@@ -24,7 +23,6 @@ This is just a test.`),
 	expected := Post{
 		"/blog/test",
 		"Testing!",
-		[]string{"one", "two"},
 		expectedTime,
 		"<p>This is just a test.</p>\n",
 	}
@@ -45,7 +43,6 @@ func TestMakePostDefaultMetadata(t *testing.T) {
 	expected := Post{
 		"/blog/some-test",
 		"Some Test",
-		[]string{},
 		time.Now(),
 		"<p>This is a test</p>\n",
 	}
@@ -68,7 +65,6 @@ func TestMakePostHtmlFile(t *testing.T) {
 	expected := Post{
 		"/another-test",
 		"Another Test",
-		[]string{},
 		time.Now(),
 		"This is a test",
 	}
