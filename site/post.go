@@ -74,5 +74,5 @@ func (post Post) Render(site Site) (string, error) {
 
 	partialsProvider := &mustache.StaticProvider{site.Partials}
 
-	return mustache.RenderInLayoutPartials(post.Template, site.Layout, partialsProvider, context)
+	return mustache.RenderInLayoutPartials(post.Template, site.Layouts[PostLayout], partialsProvider, context)
 }

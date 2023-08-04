@@ -11,6 +11,15 @@ import (
 
 type DataMap map[interface{}]interface{}
 
+// A layout type.
+type LayoutType uint8
+
+const (
+	DefaultLayout LayoutType = iota
+	PageLayout
+	PostLayout
+)
+
 type SiteConfig struct {
 	Title       string
 	Description string
@@ -23,7 +32,7 @@ type SiteConfig struct {
 type Site struct {
 	Config          SiteConfig
 	SourceDirectory string
-	Layout          string
+	Layouts         map[LayoutType]string
 	Pages           []Page
 	Partials        map[string]string
 	Posts           []Post
@@ -95,17 +104,43 @@ func Load(siteDirectory string) (Site, error) {
 		return site, err
 	}
 
-	// Layout
+	// Layouts
 
 	layoutPath := path.Join(siteDirectory, "layout.html")
 	if _, err := os.Stat(layoutPath); os.IsNotExist(err) {
-		site.Layout = "{{{ content }}}"
+		site.Layouts = map[LayoutType]string{
+			DefaultLayout: "{{{ content }}}",
+			PageLayout:    "{{{ content }}}",
+			PostLayout:    "{{{ content }}}",
+		}
 	} else {
 		contents, err = os.ReadFile(layoutPath)
 		if err != nil {
 			return site, fmt.Errorf("Unable to load layout template at path: %v", layoutPath)
 		}
-		site.Layout = string(contents)
+		site.Layouts = map[LayoutType]string{
+			DefaultLayout: string(contents),
+			PageLayout:    string(contents),
+			PostLayout:    string(contents),
+		}
+	}
+
+	layoutPath = path.Join(siteDirectory, "layout-page.html")
+	if _, err := os.Stat(layoutPath); !os.IsNotExist(err) {
+		contents, err = os.ReadFile(layoutPath)
+		if err != nil {
+			return site, fmt.Errorf("Unable to load layout template at path: %v", layoutPath)
+		}
+		site.Layouts[PageLayout] = string(contents)
+	}
+
+	layoutPath = path.Join(siteDirectory, "layout-post.html")
+	if _, err := os.Stat(layoutPath); !os.IsNotExist(err) {
+		contents, err = os.ReadFile(layoutPath)
+		if err != nil {
+			return site, fmt.Errorf("Unable to load layout template at path: %v", layoutPath)
+		}
+		site.Layouts[PostLayout] = string(contents)
 	}
 
 	// Pages

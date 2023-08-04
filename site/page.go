@@ -31,5 +31,5 @@ func (page Page) Render(site Site) (string, error) {
 
 	partialsProvider := &mustache.StaticProvider{site.Partials}
 
-	return mustache.RenderInLayoutPartials(page.Template, site.Layout, partialsProvider, context)
+	return mustache.RenderInLayoutPartials(page.Template, site.Layouts[PageLayout], partialsProvider, context)
 }

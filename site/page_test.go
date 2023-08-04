@@ -58,12 +58,14 @@ func TestPageRender(t *testing.T) {
 	site := Site{
 		testConfig,
 		temporaryDirectory,
-		`<head>
-			<title>{{ site.title }}</title>
-		</head>
-		<body>
-		{{{ content }}}
-		</body>`,
+		map[LayoutType]string{
+			PageLayout: `<head>
+				<title>{{ site.title }}</title>
+			</head>
+			<body>
+				{{{ content }}}
+			</body>`,
+		},
 		[]Page{},
 		map[string]string{
 			"temp": `<em>This is from a template</em>`,

@@ -39,12 +39,30 @@ func createExampleSite(t *testing.T) string {
 	}
 	configFile.Close()
 
-	// Layout file
+	// Layout files
 	layoutFile, err := os.Create(path.Join(temporaryDirectory, "layout.html"))
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
 	_, err = layoutFile.WriteString("This is a layout")
+	if err != nil {
+		t.Fatalf("Unable to create example site: %v", err)
+	}
+	layoutFile.Close()
+	layoutFile, err = os.Create(path.Join(temporaryDirectory, "layout-page.html"))
+	if err != nil {
+		t.Fatalf("Unable to create example site: %v", err)
+	}
+	_, err = layoutFile.WriteString("This is the page layout")
+	if err != nil {
+		t.Fatalf("Unable to create example site: %v", err)
+	}
+	layoutFile.Close()
+	layoutFile, err = os.Create(path.Join(temporaryDirectory, "layout-post.html"))
+	if err != nil {
+		t.Fatalf("Unable to create example site: %v", err)
+	}
+	_, err = layoutFile.WriteString("This is the post layout")
 	if err != nil {
 		t.Fatalf("Unable to create example site: %v", err)
 	}
@@ -163,8 +181,14 @@ func TestLoad(t *testing.T) {
 	if site.SourceDirectory != dirPath {
 		t.Fatalf("Incorrect site.SourceDirectory: %v", site.SourceDirectory)
 	}
-	if site.Layout != "This is a layout" {
-		t.Fatalf("Incorrect site.Layout: %v", site.Layout)
+	if site.Layouts[DefaultLayout] != "This is a layout" {
+		t.Fatalf("Incorrect site.Layouts[DefaultLayout]: %v", site.Layouts[DefaultLayout])
+	}
+	if site.Layouts[PageLayout] != "This is the page layout" {
+		t.Fatalf("Incorrect site.Layouts[PageLayout]: %v", site.Layouts[PageLayout])
+	}
+	if site.Layouts[PostLayout] != "This is the post layout" {
+		t.Fatalf("Incorrect site.Layouts[PostLayout]: %v", site.Layouts[PostLayout])
 	}
 	if site.Config.Data["instagram"] != "https://www.instagram.com/youngfatigue/" {
 		t.Fatalf("Incorrect site.Config.Data[\"instagram\"]: %v", site.Config.Data["instagram"])
@@ -187,14 +211,21 @@ func TestLoadWithoutLayout(t *testing.T) {
 	dirPath := createExampleSite(t)
 	defer os.RemoveAll(dirPath)
 	os.Remove(path.Join(dirPath, "layout.html"))
+	os.Remove(path.Join(dirPath, "layout-post.html"))
 
 	site, err := Load(dirPath)
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	if site.Layout != "{{{ content }}}" {
-		t.Fatalf("Incorrect site.Layout: %v", site.Layout)
+	if site.Layouts[DefaultLayout] != "{{{ content }}}" {
+		t.Fatalf("Incorrect site.Layouts[DefaultLayout]: %v", site.Layouts[DefaultLayout])
+	}
+	if site.Layouts[PageLayout] != "This is the page layout" {
+		t.Fatalf("Incorrect site.Layouts[PageLayout]: %v", site.Layouts[PageLayout])
+	}
+	if site.Layouts[PostLayout] != "{{{ content }}}" {
+		t.Fatalf("Incorrect site.Layouts[PostLayout]: %v", site.Layouts[PostLayout])
 	}
 }
 
