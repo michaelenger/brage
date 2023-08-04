@@ -3,7 +3,6 @@ package site
 import (
 	"log"
 	"path"
-	"regexp"
 	"strings"
 	"time"
 
@@ -53,13 +52,8 @@ func MakePost(file files.File, pathPrefix string) Post {
 		publishedDate = parsedTime
 	}
 
-	var nonWordCharacters = regexp.MustCompile(`[^\w\s]`)
-	postPath := strings.ToLower(strings.ReplaceAll(
-		nonWordCharacters.ReplaceAllString(title, ""),
-		" ", "-"))
-
 	return Post{
-		path.Join(pathPrefix, postPath),
+		path.Join(pathPrefix, files.FileName(file.Path)),
 		title,
 		tags,
 		publishedDate,

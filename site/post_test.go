@@ -22,7 +22,7 @@ This is just a test.`),
 	}
 	expectedTime, _ := time.Parse("2006-01-02", "2020-10-01")
 	expected := Post{
-		"/blog/testing",
+		"/blog/test",
 		"Testing!",
 		[]string{"one", "two"},
 		expectedTime,

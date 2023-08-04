@@ -113,19 +113,23 @@ func CopyFile(source string, destination string) error {
 	return err
 }
 
+// Given a path, return the name of a file without the file extension.
+func FileName(filePath string) string {
+	base := path.Base(filePath)
+	extension := filepath.Ext(base)
+
+	return base[:len(base)-len(extension)]
+}
+
 // Convert a path into a page/post title.
 func PathToTitle(filePath string) string {
 	if filePath == "/" {
 		return "Home"
 	}
 
-	base := path.Base(filePath)
-	extension := filepath.Ext(base)
-	name := base[:len(base)-len(extension)]
-
 	return strings.Title(
 		strings.ReplaceAll(
-			strings.ReplaceAll(name, "_", " "),
+			strings.ReplaceAll(FileName(filePath), "_", " "),
 			"-", " "))
 }
 
