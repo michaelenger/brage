@@ -14,7 +14,7 @@ func TestMakePost(t *testing.T) {
 		"/tmp/test.md",
 		[]byte(`---
 title: Testing!
-published_date: 2020-10-01
+date: 2020-10-01
 ---
 
 This is just a test.`),
@@ -49,7 +49,7 @@ func TestMakePostDefaultMetadata(t *testing.T) {
 
 	result := MakePost(file, "/blog")
 
-	result.PublishedDate = expected.PublishedDate // we'll be milliseconds off, so no point in checking
+	result.Date = expected.Date // we'll be milliseconds off, so no point in checking
 
 	if !reflect.DeepEqual(result, expected) {
 		t.Fatalf("Received:\n%+v\nExpected:\n%+v", result, expected)
@@ -71,7 +71,7 @@ func TestMakePostHtmlFile(t *testing.T) {
 
 	result := MakePost(file, "/")
 
-	result.PublishedDate = expected.PublishedDate // we'll be milliseconds off, so no point in checking
+	result.Date = expected.Date // we'll be milliseconds off, so no point in checking
 
 	if !reflect.DeepEqual(result, expected) {
 		t.Fatalf("Received:\n%+v\nExpected:\n%+v", result, expected)

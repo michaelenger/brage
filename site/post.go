@@ -11,10 +11,10 @@ import (
 
 // A blog post.
 type Post struct {
-	Path          string
-	Title         string
-	PublishedDate time.Time
-	Template      string
+	Path     string
+	Title    string
+	Date     time.Time
+	Template string
 }
 
 // Make a post out the given File.
@@ -34,7 +34,7 @@ func MakePost(file files.File, pathPrefix string) Post {
 	}
 
 	publishedDate := time.Now()
-	if val, ok := metadata["published_date"]; ok {
+	if val, ok := metadata["date"]; ok {
 		parsedTime, err := time.Parse("2006-01-02", val.(string))
 		if err != nil {
 			logger := log.Default()
@@ -55,10 +55,10 @@ func MakePost(file files.File, pathPrefix string) Post {
 // Create the context used when rendering the post.
 func (post Post) makeContext(site Site) map[string]interface{} {
 	postContext := map[string]interface{}{
-		"path":           post.Path,
-		"template":       post.Template,
-		"title":          post.Title,
-		"published_date": post.PublishedDate.Format("2006-01-02"),
+		"path":     post.Path,
+		"template": post.Template,
+		"title":    post.Title,
+		"date":     post.Date.Format("2006-01-02"),
 	}
 
 	return map[string]interface{}{
