@@ -42,7 +42,16 @@ This is my **first** post!
 `
 
 const INDEX_TEMPLATE = `<p>This is the main page.</p>
+<h3>Words I like</h3>
 {{ > extra }}
+
+<h3>Posts</h3>
+<ul>
+	{{# site.posts }}
+		<li>{{ date }} <a href="{{ path }}">{{ title }}</a></li>
+	{{/ site.posts }}
+</ul>
+
 <a href="/about">About</a>
 `
 
