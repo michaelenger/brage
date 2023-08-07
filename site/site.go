@@ -182,11 +182,21 @@ func Load(siteDirectory string) (Site, error) {
 
 // Make the site context used when rendering pages and posts.
 func (site Site) MakeContext() map[string]interface{} {
+	posts := make([]map[string]string, len(site.Posts))
+	for i := range site.Posts {
+		posts[i] = map[string]string{
+			"path": site.Posts[i].Path,
+			"title": site.Posts[i].Title,
+			"date": site.Posts[i].Date.Format("2006-01-02"),
+		}
+	}
+
 	return map[string]interface{}{
 		"title":       site.Config.Title,
 		"description": site.Config.Description,
 		"image":       site.Config.Image,
 		"root_url":    site.Config.RootUrl,
 		"redirects":   site.Config.Redirects,
+		"posts":       posts,
 	}
 }

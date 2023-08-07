@@ -3,7 +3,9 @@ package site
 import (
 	"os"
 	"path"
+	"reflect"
 	"testing"
+	"time"
 )
 
 var exampleConfig = `
@@ -269,5 +271,62 @@ func TestLoadMissingPages(t *testing.T) {
 	_, err := Load(dirPath)
 	if err == nil {
 		t.Fatalf("Expected error but got nil")
+	}
+}
+
+func TestMakeContext(t *testing.T) {
+	date, _ := time.Parse("2006-01-02", "2010-09-08")
+	site := Site{
+		SiteConfig{
+			"Title",
+			"Description",
+			"image.png",
+			"https://example.org",
+			map[string]string{
+				"redirect": "https://google.com",
+			},
+			DataMap{
+				"one": 1,
+				"two": "two",
+			},
+		},
+		"/tmp",
+		map[LayoutType]string{
+			DefaultLayout: "",
+			PageLayout:    "",
+			PostLayout:    "",
+		},
+		[]Page{},
+		map[string]string{},
+		[]Post{
+			{
+				"/blog/first-post",
+				"First Post",
+				date,
+				"This is a test",
+			},
+		},
+	}
+	expected := map[string]interface{}{
+		"title":       "Title",
+		"description": "Description",
+		"image":       "image.png",
+		"root_url":    "https://example.org",
+		"redirects": map[string]string{
+			"redirect": "https://google.com",
+		},
+		"posts": []map[string]string{
+			{
+				"path": "/blog/first-post",
+				"title": "First Post",
+				"date": "2010-09-08",
+			},
+		},
+	}
+
+	result := site.MakeContext()
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Fatalf("Received:\n%+v\nExpected:\n%+v", result, expected)
 	}
 }
