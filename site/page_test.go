@@ -15,38 +15,15 @@ var testConfig = SiteConfig{
 		"/example": "https://example.org/",
 	},
 	DataMap{
-		"Skills": []string{
+		"skills": []string{
 			"one", "two", "three",
 		},
 	},
 }
 
-var whitespacePattern = regexp.MustCompile(`\s`)
-
-func TestPageTitle(t *testing.T) {
-	var tests map[string]string = map[string]string{
-		"/":               "Home",
-		"/about":          "About",
-		"/this-is-a-test": "This Is A Test",
-		"/one/two/three":  "Three",
-	}
-
-	var page Page
-	var result string
-
-	for path, expected := range tests {
-		page = Page{
-			path,
-			"",
-		}
-		result = page.Title()
-		if result != expected {
-			t.Fatalf("Result:\n%v\nExpected:\n%v", result, expected)
-		}
-	}
-}
-
 func TestPageRender(t *testing.T) {
+	var whitespacePattern = regexp.MustCompile(`\s`)
+
 	temporaryDirectory, err := os.MkdirTemp("", "examplesite")
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
@@ -54,12 +31,12 @@ func TestPageRender(t *testing.T) {
 
 	page := Page{
 		"/example",
-		`<h1>{{ .Page.Title }}</h1>
-		{{ range .Data.Skills }}
+		`<h1>{{ page.title }}</h1>
+		{{ #data.skills }}
 			<p>{{ . }}</p>
-		{{ end }}
+		{{ /data.skills }}
 
-		{{ template "temp" . }}`,
+		{{> temp }}`,
 	}
 
 	expected := `<head>
@@ -81,51 +58,19 @@ func TestPageRender(t *testing.T) {
 	site := Site{
 		testConfig,
 		temporaryDirectory,
-		`<head>
-			<title>{{ .Site.Title }}</title>
-		</head>
-		<body>
-		{{ .Content }}
-		</body>`,
+		map[LayoutType]string{
+			PageLayout: `<head>
+				<title>{{ site.title }}</title>
+			</head>
+			<body>
+				{{{ content }}}
+			</body>`,
+		},
 		[]Page{},
 		map[string]string{
 			"temp": `<em>This is from a template</em>`,
 		},
-	}
-
-	result, err := page.Render(site)
-	if err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-
-	result = whitespacePattern.ReplaceAllString(result, "")
-	expected = whitespacePattern.ReplaceAllString(expected, "")
-
-	if result != expected {
-		t.Fatalf("Result:\n%v\nExpected:\n%v", result, expected)
-	}
-}
-
-func TestPageRenderWithMarkdown(t *testing.T) {
-	temporaryDirectory, err := os.MkdirTemp("", "examplesite")
-	if err != nil {
-		t.Fatalf("Unexpected error: %v", err)
-	}
-
-	page := Page{
-		"/example",
-		`{{ markdown "Now this is _podracing_!" }}`,
-	}
-
-	expected := `<p>Now this is <em>podracing</em>!</p>
-		`
-
-	site := Site{
-		testConfig,
-		temporaryDirectory,
-		`{{ .Content }}`,
-		[]Page{},
-		map[string]string{},
+		[]Post{},
 	}
 
 	result, err := page.Render(site)

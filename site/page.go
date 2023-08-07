@@ -1,12 +1,8 @@
 package site
 
 import (
-	"bytes"
-	"path"
-	"strings"
-	"text/template"
-
-	"brage/utils"
+	"brage/files"
+	"github.com/cbroglie/mustache"
 )
 
 type Page struct {
@@ -14,93 +10,26 @@ type Page struct {
 	Template string
 }
 
-// Get the title of a page.
-func (page Page) Title() string {
-	if page.Path == "/" {
-		return "Home"
+// Create the context used when rendering a page.
+func (page Page) makeContext(site Site) map[string]interface{} {
+	pageContext := map[string]string{
+		"path":     page.Path,
+		"template": page.Template,
+		"title":    files.PathToTitle(page.Path),
 	}
 
-	return strings.Title(
-		strings.ReplaceAll(
-			strings.ReplaceAll(
-				path.Base(page.Path), "_", " "),
-			"-", " "))
-}
-
-// Add functions and extra templates to the main template.
-func addExtras(mainTemplate *template.Template, templateFiles map[string]string) error {
-	mainTemplate.Funcs(template.FuncMap{
-		"markdown": func(text string) string {
-			return utils.RenderMarkdown([]byte(text))
-		},
-	})
-
-	for name, content := range templateFiles {
-		subTemplate := mainTemplate.New(name)
-		_, err := subTemplate.Parse(content)
-		if err != nil {
-			return err
-		}
+	return map[string]interface{}{
+		"site": site.MakeContext(),
+		"page": pageContext,
+		"data": site.Config.Data,
 	}
-
-	return nil
 }
 
 // Render a page using a specific site config and layout file.
 func (page Page) Render(site Site) (string, error) {
-	layoutTemplate := template.New("layout")
-	err := addExtras(layoutTemplate, site.Templates)
-	if err != nil {
-		return "", err
-	}
-	layoutTemplate, err = layoutTemplate.Parse(site.Layout)
-	if err != nil {
-		return "", err
-	}
+	context := page.makeContext(site)
 
-	pageTemplate := template.New("page")
-	err = addExtras(pageTemplate, site.Templates)
-	if err != nil {
-		return "", err
-	}
-	pageTemplate, err = pageTemplate.Parse(page.Template)
-	if err != nil {
-		return "", err
-	}
+	partialsProvider := &mustache.StaticProvider{site.Partials}
 
-	pageData := struct {
-		Site SiteConfig
-		Page Page
-		Data DataMap
-	}{
-		site.Config,
-		page,
-		site.Config.Data,
-	}
-
-	var buffer bytes.Buffer
-	err = pageTemplate.Execute(&buffer, pageData)
-	if err != nil {
-		return "", err
-	}
-
-	layoutData := struct {
-		Site    SiteConfig
-		Page    Page
-		Data    DataMap
-		Content string
-	}{
-		site.Config,
-		page,
-		site.Config.Data,
-		buffer.String(),
-	}
-
-	buffer.Reset()
-	err = layoutTemplate.Execute(&buffer, layoutData)
-	if err != nil {
-		return "", err
-	}
-
-	return buffer.String(), nil
+	return mustache.RenderInLayoutPartials(page.Template, site.Layouts[PageLayout], partialsProvider, context)
 }

@@ -4,13 +4,12 @@ _Brage is the Norwegian name for the ancient norse god [Bragi](https://en.wikipe
 the skaldic god of poetry._
 
 Brage is a simple static site generator written in [Go](https://go.dev/). It
-supports building pages using [Go templates](https://pkg.go.dev/text/template) and
-[Markdown](https://www.markdownguide.org/).
+supports building pages and posts using [mustache](https://mustache.github.io/)
+and [Markdown](https://www.markdownguide.org/) templates.
 
 ## Usage
 
-Usage is based on three main commands, `init`, `serve`, and `build`, all of which
-are built to work on a single source directory.
+Usage is based on three main commands, `init`, `serve`, and `build`, all of  which are built to work on a single source directory.
 
 ### Init
 
@@ -18,9 +17,7 @@ are built to work on a single source directory.
 brage init [PATH]
 ```
 
-`init` is used to initialise a new site and will create a bunch of files that can
-be used as a template when creating a new site. If no `PATH` is specified then it
-will generate the files in the current directory.
+`init` is used to initialise a new site and will create a bunch of files that can be used as a template when creating a new site. If no `PATH` is specified then it will generate the files in the current directory.
 
 #### Options
 
@@ -32,9 +29,7 @@ will generate the files in the current directory.
 brage serve [PATH]
 ```
 
-`serve` will serve the site specified in the `PATH` (or the current directory if
-nothing is specified) on port `8080`. This can be used when developing or debugging
-the site.
+`serve` will serve the site specified in the `PATH` (or the current directory if nothing is specified) on port `8080`. This can be used when developing or debugging the site.
 
 #### Options
 
@@ -46,10 +41,7 @@ the site.
 brage build [PATH]
 ```
 
-`build` builds the site, generating all the static HTML files and copying any assets
-to the appropriate location. It will read the site from the `PATH` location (or the
-current directory if nothing is specified) and store the generated files in a `build`
-subdirectory if no output path is specified.
+`build` builds the site, generating all the static HTML files and copying any assets to the appropriate location. It will read the site from the `PATH` location (or the current directory if nothing is specified) and store the generated files in a `build` subdirectory if no output path is specified.
 
 #### Options
 
@@ -58,35 +50,30 @@ subdirectory if no output path is specified.
 
 ## Building Sites
 
-Sites are defined with a config [YAML](https://yaml.org/) file, an optional layout
-template, one or more page templates, and optional assets.
+Sites are defined with a config [YAML](https://yaml.org/) file, an optional layout template, one or more page templates, one or more post templates, partial templates, and optional assets.
 
 ### Config
 
-The config for a site is specified in a `config.yaml` file in the site's directory.
-It can contain the following fields:
+The config for a site is specified in a `config.yaml` file in the site's directory. It can contain the following fields:
 
 * `title` The site title
 * `description` Site description
 * `image` Favicon
-* `rootUrl` The root URL of the site
+* `root_url` The root URL of the site
 * `redirects` Map of URIs that should redirect to other URLs
 * `data` A map containing any optional data you want to use in the templates
 
-The contents of the config file is available in the templates under the `.Site` variable,
-and anything defined in the `data` field is available under `.Data`:
+The contents of the config file is available in the templates under the `site` variable, and anything defined in the `data` field is available under `data`:
 
 ```gohtml
-Welcome to {{ .Site.Title }}.
+Welcome to {{ site.title }}.
 
-Here is my dog: {{ .Data.dog }}
+Here is my dog: {{ data.dog }}
 ```
 
 ### Templates
 
-The HTML templates are all parsed as standard [Go text templates](https://pkg.go.dev/text/template)
-and HTML is not escaped, so you are forewarned that the rendering isn't going to
-sanitise anything for you.
+The HTML templates are all parsed as standard [Mustache templates](https://mustache.github.io/) and HTML is not escaped, so you are forewarned that the rendering isn't going to sanitise anything for you.
 
 #### Variables
 
@@ -96,26 +83,35 @@ The following variables are passed into the template and are available:
 
 Contains site data as defined in the `config.yaml` file:
 
-* `.Site.Title` Site title
-* `.Site.Description` Site description
-* `.Site.Image` Favicon/social media image
-* `.Site.RootUrl` Root URL
-* `.Site.Redirects` Redirect map
+* `site.title` Site title
+* `site.description` Site description
+* `site.image` Favicon/social media image
+* `site.root_url` Root URL
+* `site.redirects` Redirect map
+* `site.posts` A list of all available posts (with their respective `path`, `title`, and `date`s)
 
 ##### Page
 
 Contains information about the current page:
 
-* `.Page.Path` Path to the page
-* `.Page.Template` Contents of the page template
-* `.Page.Title` Automatically inferred title based on the path
+* `page.path` Path to the page
+* `page.template` Contents of the page template
+* `page.title` Automatically inferred title based on the path
 
 The title for the root path is `"Home"`
 
+##### Post
+
+Contains information about the current post:
+
+* `page.path` Path to the page
+* `page.template` Contents of the page template
+* `page.title` Automatically inferred title based on the path
+* `page.date` Date of the post (as specified in the metadata)
+
 ##### Data
 
-The `.Data` variable contains all the variables which were added in the `data` field
-in the `config.yaml` file. For example, the following config:
+The `data` variable contains all the variables which were added in the `data` field in the `config.yaml` file. For example, the following config:
 
 ```yaml
 data:
@@ -135,59 +131,71 @@ data:
 
 Would result in the following variables being present:
 
-* `.Data.bananas` An array of strings
-* `.Data.explosions` The string "all over the place"
-* `.Data.best_numbers` An array of the best numbers containing maps
+* `data.bananas` An array of strings
+* `data.explosions` The string "all over the place"
+* `data.best_numbers` An array of the best numbers containing maps
 
 ##### Content
 
-In the `layout.html` file there also exists a `.Content` variable which has the
-contents of the current page.
-
-#### Functions
-
-The following functions are available when rendering templates:
-
-* `markdown [text]` Render HTML from Markdown text (note, this will wrap the resulting text in `<p></p>` tags)
+In the `layout.html` file you can also use the special command ```{{{content}}}``` to output the contents of the current page.
 
 ### Layout
 
-The `layout.html` file defines the layout of the site and is used to wrap all pages.
-When a page is generated its contents are stored and made available in the `.Content`
-template variable.
+The `layout.html` file defines the layout of the site and is used to wrap all pages. When a page is generated its contents are stored and made available in the `content` template variable.
 
 An example layout which doesn't add more than the site title would be as follows:
 
 ```gohtml
 <head>
-    <title>{{ .Page.Title }}</title>
+    <title>{{ page.title }}</title>
 </head>
 <body>
-    {{ .Content }}
+    {{{ content }}}
 </body>
 ```
 
 Using a layout template is optional, but _highly recommended_.
 
+#### Page and Post Layout
+
+You can use custom layouts for posts and pages by providing the `layout-page.html` or `layout-post.html` files.
+
 ### Pages
 
-Pages are built based on template files in a `pages` subdirectory and need to have
-the `.html` or `.markdown` file extension for Go template and Markdown templates
-respectively. The URL for the page is based on its name (and subdirectory) except
-for any template named `index` which will have no name.
+Pages are built based on template files in a `pages` subdirectory and need to have the `.html` or `.markdown` file extension for Go template and Markdown templates respectively. The URI for the page is based on its name (and subdirectory) except for any template named `index` which will have no name.
 
 * `/pages/index.html` => `/`
 * `/pages/another-page.markdown` => `/another-page`
 * `/pages/sub/index.html` => `/sub`
 * `/pages/sub/sub/page.html` => `/sub/sub/page`
 
-### Extra Templates
+### Posts
 
-Any files present in the `templates` subdirectory will be available using their name
-in any page templates using the `template` function. Their name is their path relative
-to the `templates` directory without the file extension.
+Posts (similar to pages) are in template files in a `posts` subdirectory and can be both HTML or Markdown, defined by their file extension. The URI for the post is also on its file name, but ignores any subdirectories and gets the `/blog` prefix. Note that there is nothing stopping you from creating two posts which override each other.
 
-_/templates/extra.markdown_
+* `/posts/first-post.markdown` => `/blog/first-post`
+* `/posts/sub/this-is-a-subdir.markdown` => `/blog/this-is-a-subdir`
+* `/posts/sub/sub/post.html` => `/blog/post`
+
+#### Post Metadata
+
+Posts written in Markdown can define the title and date for the post in a YAML "front matter" section:
+
+```markdown
+---
+title: Post title goes here
+date: 2009-08-07
+---
+This is the actual post.
+```
+
+Dates must be defined in the `YYYY-MM-DD` format and the list of posts will be sorted to show the latest ones first.
+
+### Partials
+
+Any files present in the `partials` subdirectory will be available using their name with the partial syntax:
+
+_/partials/extra.markdown_
 ```markdown
 This is in the template.
 ```
@@ -196,13 +204,12 @@ _/pages/index.html_
 ```gohtml
 This is in the page.
 
-{{ template "extra" }}
+{{> extra }}
 ```
 
 ### Assets
 
-Assets are files in the `assets` subdirectory and are copied directly to an `assets`
-subdirectory in the target path when building the site.
+Assets are files in the `assets` subdirectory and are copied directly to an `assets` subdirectory in the target path when building the site.
 
 ## Building
 
@@ -214,7 +221,10 @@ GOARCH=amd64 GOOS=linux go build
 
 ## TODO
 
-Potential changes to the tool:
-
-* Remove any required items from the config file and just let the whole thing be in `.Data`?
-* Customise the path to the assets directory?
+* Generate an RSS/Atom file.
+* Provide lists of top 5/10 posts (or use a lambda?)
+* Add word count and reading time to the posts.
+* Warn when a post is going to override another one.
+* Allow for customizing the posts prefix.
+* Support tags for posts?
+* Hide posts with dates in the future.

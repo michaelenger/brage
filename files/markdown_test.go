@@ -1,8 +1,35 @@
-package utils
+package files
 
 import (
+	"reflect"
 	"testing"
 )
+
+func TestParseMarkdown(t *testing.T) {
+	test := []byte(`---
+title: Test
+test: true
+number: 123
+---
+
+This is just a test`)
+
+	meta, html := ParseMarkdown(test)
+	expectedMeta := map[string]interface{}{
+		"title":  "Test",
+		"test":   true,
+		"number": 123,
+	}
+	expectedHtml := `<p>This is just a test</p>
+`
+	if html != expectedHtml {
+		t.Fatalf("Expected: '%s'\nReceived: '%s'", expectedHtml, html)
+	}
+
+	if !reflect.DeepEqual(meta, expectedMeta) {
+		t.Fatalf("Received:\n%+v\nExpected:\n%+v", meta, expectedMeta)
+	}
+}
 
 func TestRenderMarkdown(t *testing.T) {
 	var expected string

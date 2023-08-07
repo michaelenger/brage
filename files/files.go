@@ -1,5 +1,4 @@
-// File utilities.
-package utils
+package files
 
 import (
 	"fmt"
@@ -7,16 +6,33 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
-// Load the contents of markdown file.
-func readMarkdownFile(filePath string) (string, error) {
-	contents, err := os.ReadFile(filePath)
-	if err != nil {
-		return "", err
-	}
+// A file type.
+type FileType uint8
 
-	return RenderMarkdown(contents), nil
+const (
+	UnknownFile FileType = iota
+	HtmlFile
+	MarkdownFile
+)
+
+// A file which was read from the file system.
+type File struct {
+	Type    FileType
+	Path    string
+	Content []byte
+}
+
+// Render the file.
+func (f File) Render() string {
+	switch f.Type {
+	case MarkdownFile:
+		return RenderMarkdown(f.Content)
+	default:
+		return string(f.Content)
+	}
 }
 
 // Convert a relative path to an absolute path, relative to the current
@@ -97,9 +113,29 @@ func CopyFile(source string, destination string) error {
 	return err
 }
 
-// Recursively build a list of template files and returns a map of their name to their content.
-func LoadTemplateFiles(directoryPath string, prefixPath string) (map[string]string, error) {
-	pages := map[string]string{}
+// Given a path, return the name of a file without the file extension.
+func FileName(filePath string) string {
+	base := path.Base(filePath)
+	extension := filepath.Ext(base)
+
+	return base[:len(base)-len(extension)]
+}
+
+// Convert a path into a page/post title.
+func PathToTitle(filePath string) string {
+	if filePath == "/" {
+		return "Home"
+	}
+
+	return strings.Title(
+		strings.ReplaceAll(
+			strings.ReplaceAll(FileName(filePath), "_", " "),
+			"-", " "))
+}
+
+// Recursively read files and returns a map of their path to their content, relative to the directory path.
+func ReadFiles(directoryPath string, pathPrefix string) (map[string]File, error) {
+	pages := map[string]File{}
 
 	files, err := os.ReadDir(directoryPath)
 	if err != nil {
@@ -115,7 +151,7 @@ func LoadTemplateFiles(directoryPath string, prefixPath string) (map[string]stri
 		fullPath := path.Join(directoryPath, filename)
 
 		if file.IsDir() {
-			subpages, err := LoadTemplateFiles(fullPath, path.Join(prefixPath, filename))
+			subpages, err := ReadFiles(fullPath, path.Join(pathPrefix, filename))
 			if err != nil {
 				return pages, err
 			}
@@ -127,24 +163,28 @@ func LoadTemplateFiles(directoryPath string, prefixPath string) (map[string]stri
 		}
 
 		fileExtension := filepath.Ext(filename)
-		var templateContents string
-		if fileExtension == ".html" {
-			contents, err := os.ReadFile(fullPath)
-			if err != nil {
-				return pages, err
-			}
-			templateContents = string(contents)
-		} else if fileExtension == ".markdown" {
-			templateContents, err = readMarkdownFile(fullPath)
-			if err != nil {
-				return pages, err
-			}
-		} else {
+		filetype := UnknownFile
+
+		switch fileExtension[1:] {
+		case "html", "htm":
+			filetype = HtmlFile
+		case "markdown", "md":
+			filetype = MarkdownFile
+		default:
 			continue
 		}
 
-		templateName := path.Join(prefixPath, filename[:len(filename)-len(fileExtension)])
-		pages[templateName] = templateContents
+		fileContents, err := os.ReadFile(fullPath)
+		if err != nil {
+			return pages, err
+		}
+
+		name := path.Join(pathPrefix, filename[:len(filename)-len(fileExtension)])
+		pages[name] = File{
+			filetype,
+			fullPath,
+			fileContents,
+		}
 	}
 
 	return pages, nil

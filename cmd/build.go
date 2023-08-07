@@ -6,8 +6,8 @@ import (
 	"os"
 	"path"
 
+	"brage/files"
 	"brage/site"
-	"brage/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -30,8 +30,8 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 		destinationPath = path.Join(sourcePath, "build")
 	}
 
-	sourcePath = utils.AbsolutePath(sourcePath)
-	destinationPath = utils.AbsolutePath(destinationPath)
+	sourcePath = files.AbsolutePath(sourcePath)
+	destinationPath = files.AbsolutePath(destinationPath)
 
 	logger.Printf("Loading site from: %v", sourcePath)
 
@@ -51,7 +51,7 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 			}
 		}
 
-		assets, err := utils.CopyDirectory(assetsDirectory, destinationPath)
+		assets, err := files.CopyDirectory(assetsDirectory, destinationPath)
 		if err != nil {
 			logger.Fatalf("ERROR! Unable to copy assets: %v", err)
 		}
@@ -71,7 +71,7 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 	</body>
 </html>`, targetUrl, targetUrl)
 
-		err = utils.WriteFile(filePath, content)
+		err = files.WriteFile(filePath, content)
 		if err != nil {
 			logger.Fatalf("ERROR! Unable to create redirect file: %v", err)
 		}
@@ -85,8 +85,18 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 		if err != nil {
 			logger.Fatalf("ERROR! Unable to render page file: %v", err)
 		}
-		utils.WriteFile(filePath, content)
+		files.WriteFile(filePath, content)
 		logger.Printf("Wrote file for: %v", page.Path)
+	}
+
+	for _, post := range site.Posts {
+		filePath := path.Join(destinationPath, post.Path, "index.html")
+		content, err := post.Render(site)
+		if err != nil {
+			logger.Fatalf("ERROR! Unable to render post file: %v", err)
+		}
+		files.WriteFile(filePath, content)
+		logger.Printf("Wrote file for: %v", post.Path)
 	}
 }
 
