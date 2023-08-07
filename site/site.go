@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"sort"
 
 	"brage/files"
 	"gopkg.in/yaml.v2"
@@ -176,6 +177,7 @@ func Load(siteDirectory string) (Site, error) {
 	// Posts
 
 	site.Posts = loadPosts(path.Join(siteDirectory, "posts"))
+	sort.Sort(sort.Reverse(byPostDate(site.Posts)))
 
 	return site, nil
 }
