@@ -9,8 +9,7 @@ and [Markdown](https://www.markdownguide.org/) templates.
 
 ## Usage
 
-Usage is based on three main commands, `init`, `serve`, and `build`, all of which
-are built to work on a single source directory.
+Usage is based on three main commands, `init`, `serve`, and `build`, all of  which are built to work on a single source directory.
 
 ### Init
 
@@ -18,9 +17,7 @@ are built to work on a single source directory.
 brage init [PATH]
 ```
 
-`init` is used to initialise a new site and will create a bunch of files that can
-be used as a template when creating a new site. If no `PATH` is specified then it
-will generate the files in the current directory.
+`init` is used to initialise a new site and will create a bunch of files that can be used as a template when creating a new site. If no `PATH` is specified then it will generate the files in the current directory.
 
 #### Options
 
@@ -32,9 +29,7 @@ will generate the files in the current directory.
 brage serve [PATH]
 ```
 
-`serve` will serve the site specified in the `PATH` (or the current directory if
-nothing is specified) on port `8080`. This can be used when developing or debugging
-the site.
+`serve` will serve the site specified in the `PATH` (or the current directory if nothing is specified) on port `8080`. This can be used when developing or debugging the site.
 
 #### Options
 
@@ -46,10 +41,7 @@ the site.
 brage build [PATH]
 ```
 
-`build` builds the site, generating all the static HTML files and copying any assets
-to the appropriate location. It will read the site from the `PATH` location (or the
-current directory if nothing is specified) and store the generated files in a `build`
-subdirectory if no output path is specified.
+`build` builds the site, generating all the static HTML files and copying any assets to the appropriate location. It will read the site from the `PATH` location (or the current directory if nothing is specified) and store the generated files in a `build` subdirectory if no output path is specified.
 
 #### Options
 
@@ -58,13 +50,11 @@ subdirectory if no output path is specified.
 
 ## Building Sites
 
-Sites are defined with a config [YAML](https://yaml.org/) file, an optional layout
-template, one or more page templates, and optional assets.
+Sites are defined with a config [YAML](https://yaml.org/) file, an optional layout template, one or more page templates, and optional assets.
 
 ### Config
 
-The config for a site is specified in a `config.yaml` file in the site's directory.
-It can contain the following fields:
+The config for a site is specified in a `config.yaml` file in the site's directory. It can contain the following fields:
 
 * `title` The site title
 * `description` Site description
@@ -73,8 +63,7 @@ It can contain the following fields:
 * `redirects` Map of URIs that should redirect to other URLs
 * `data` A map containing any optional data you want to use in the templates
 
-The contents of the config file is available in the templates under the `site` variable,
-and anything defined in the `data` field is available under `data`:
+The contents of the config file is available in the templates under the `site` variable, and anything defined in the `data` field is available under `data`:
 
 ```gohtml
 Welcome to {{ site.Title }}.
@@ -84,9 +73,7 @@ Here is my dog: {{ data.dog }}
 
 ### Templates
 
-The HTML templates are all parsed as standard [Go text templates](https://pkg.go.dev/text/template)
-and HTML is not escaped, so you are forewarned that the rendering isn't going to
-sanitise anything for you.
+The HTML templates are all parsed as standard [Go text templates](https://pkg.go.dev/text/template) and HTML is not escaped, so you are forewarned that the rendering isn't going to sanitise anything for you.
 
 #### Variables
 
@@ -114,8 +101,7 @@ The title for the root path is `"Home"`
 
 ##### Data
 
-The `data` variable contains all the variables which were added in the `data` field
-in the `config.yaml` file. For example, the following config:
+The `data` variable contains all the variables which were added in the `data` field in the `config.yaml` file. For example, the following config:
 
 ```yaml
 data:
@@ -141,14 +127,11 @@ Would result in the following variables being present:
 
 ##### Content
 
-In the `layout.html` file you can also use the special command ```{{{content}}}```
-to output the contents of the current page.
+In the `layout.html` file you can also use the special command ```{{{content}}}``` to output the contents of the current page.
 
 ### Layout
 
-The `layout.html` file defines the layout of the site and is used to wrap all pages.
-When a page is generated its contents are stored and made available in the `content`
-template variable.
+The `layout.html` file defines the layout of the site and is used to wrap all pages. When a page is generated its contents are stored and made available in the `content` template variable.
 
 An example layout which doesn't add more than the site title would be as follows:
 
@@ -165,10 +148,7 @@ Using a layout template is optional, but _highly recommended_.
 
 ### Pages
 
-Pages are built based on template files in a `pages` subdirectory and need to have
-the `.html` or `.markdown` file extension for Go template and Markdown templates
-respectively. The URL for the page is based on its name (and subdirectory) except
-for any template named `index` which will have no name.
+Pages are built based on template files in a `pages` subdirectory and need to have the `.html` or `.markdown` file extension for Go template and Markdown templates respectively. The URL for the page is based on its name (and subdirectory) except for any template named `index` which will have no name.
 
 * `/pages/index.html` => `/`
 * `/pages/another-page.markdown` => `/another-page`
@@ -177,8 +157,7 @@ for any template named `index` which will have no name.
 
 ### Partials
 
-Any files present in the `partials` subdirectory will be available using their name
-with the partial syntax:
+Any files present in the `partials` subdirectory will be available using their name with the partial syntax:
 
 _/partials/extra.markdown_
 ```markdown
@@ -194,8 +173,7 @@ This is in the page.
 
 ### Assets
 
-Assets are files in the `assets` subdirectory and are copied directly to an `assets`
-subdirectory in the target path when building the site.
+Assets are files in the `assets` subdirectory and are copied directly to an `assets` subdirectory in the target path when building the site.
 
 ## Building
 
