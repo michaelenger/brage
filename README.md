@@ -50,7 +50,7 @@ brage build [PATH]
 
 ## Building Sites
 
-Sites are defined with a config [YAML](https://yaml.org/) file, an optional layout template, one or more page templates, and optional assets.
+Sites are defined with a config [YAML](https://yaml.org/) file, an optional layout template, one or more page templates, one or more post templates, partial templates, and optional assets.
 
 ### Config
 
@@ -66,14 +66,14 @@ The config for a site is specified in a `config.yaml` file in the site's directo
 The contents of the config file is available in the templates under the `site` variable, and anything defined in the `data` field is available under `data`:
 
 ```gohtml
-Welcome to {{ site.Title }}.
+Welcome to {{ site.title }}.
 
 Here is my dog: {{ data.dog }}
 ```
 
 ### Templates
 
-The HTML templates are all parsed as standard [Go text templates](https://pkg.go.dev/text/template) and HTML is not escaped, so you are forewarned that the rendering isn't going to sanitise anything for you.
+The HTML templates are all parsed as standard [Mustache templates](https://mustache.github.io/) and HTML is not escaped, so you are forewarned that the rendering isn't going to sanitise anything for you.
 
 #### Variables
 
@@ -88,6 +88,7 @@ Contains site data as defined in the `config.yaml` file:
 * `site.image` Favicon/social media image
 * `site.root_url` Root URL
 * `site.redirects` Redirect map
+* `site.posts` A list of all available posts (with their respective `path`, `title`, and `date`s)
 
 ##### Page
 
@@ -98,6 +99,15 @@ Contains information about the current page:
 * `page.title` Automatically inferred title based on the path
 
 The title for the root path is `"Home"`
+
+##### Post
+
+Contains information about the current post:
+
+* `page.path` Path to the page
+* `page.template` Contents of the page template
+* `page.title` Automatically inferred title based on the path
+* `page.date` Date of the post (as specified in the metadata)
 
 ##### Data
 
@@ -146,14 +156,40 @@ An example layout which doesn't add more than the site title would be as follows
 
 Using a layout template is optional, but _highly recommended_.
 
+#### Page and Post Layout
+
+You can use custom layouts for posts and pages by providing the `layout-page.html` or `layout-post.html` files.
+
 ### Pages
 
-Pages are built based on template files in a `pages` subdirectory and need to have the `.html` or `.markdown` file extension for Go template and Markdown templates respectively. The URL for the page is based on its name (and subdirectory) except for any template named `index` which will have no name.
+Pages are built based on template files in a `pages` subdirectory and need to have the `.html` or `.markdown` file extension for Go template and Markdown templates respectively. The URI for the page is based on its name (and subdirectory) except for any template named `index` which will have no name.
 
 * `/pages/index.html` => `/`
 * `/pages/another-page.markdown` => `/another-page`
 * `/pages/sub/index.html` => `/sub`
 * `/pages/sub/sub/page.html` => `/sub/sub/page`
+
+### Posts
+
+Posts (similar to pages) are in template files in a `posts` subdirectory and can be both HTML or Markdown, defined by their file extension. The URI for the post is also on its file name, but ignores any subdirectories and gets the `/blog` prefix. Note that there is nothing stopping you from creating two posts which override each other.
+
+* `/posts/first-post.markdown` => `/blog/first-post`
+* `/posts/sub/this-is-a-subdir.markdown` => `/blog/this-is-a-subdir`
+* `/posts/sub/sub/post.html` => `/blog/post`
+
+#### Post Metadata
+
+Posts written in Markdown can define the title and date for the post in a YAML "front matter" section:
+
+```markdown
+---
+title: Post title goes here
+date: 2009-08-07
+---
+This is the actual post.
+```
+
+Dates must be defined in the `YYYY-MM-DD` format and the list of posts will be sorted to show the latest ones first.
 
 ### Partials
 
@@ -185,8 +221,10 @@ GOARCH=amd64 GOOS=linux go build
 
 ## TODO
 
-Potential changes to the tool:
-
-* Remove any required items from the config file and just let the whole thing be in `.Data`?
-* Customise the path to the assets directory?
-* Support other file extensions: .md .htm .mustache
+* Generate an RSS/Atom file.
+* Provide lists of top 5/10 posts (or use a lambda?)
+* Add word count and reading time to the posts.
+* Warn when a post is going to override another one.
+* Allow for customizing the posts prefix.
+* Support tags for posts?
+* Hide posts with dates in the future.
