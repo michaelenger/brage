@@ -126,6 +126,25 @@ func (handler *siteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	for _, post := range site.Posts {
+		if post.Path == requestPath {
+			content, err := post.Render(site)
+			if err != nil {
+				handler.logger.Print("500 Server Error")
+				errorText := fmt.Sprintf("Unable to render post file: %v", err)
+				handler.logger.Print(errorText)
+				http.Error(w, errorText, http.StatusInternalServerError)
+				return
+			}
+
+			handler.logger.Print("200 OK")
+			w.Header().Set("Content-Type", "text/html")
+			w.WriteHeader(http.StatusOK)
+			io.WriteString(w, content)
+			return
+		}
+	}
+
 	handler.logger.Print("404 Not Found")
 	http.NotFound(w, r)
 }
