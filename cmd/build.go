@@ -88,6 +88,16 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 		files.WriteFile(filePath, content)
 		logger.Printf("Wrote file for: %v", page.Path)
 	}
+
+	for _, post := range site.Posts {
+		filePath := path.Join(destinationPath, post.Path, "index.html")
+		content, err := post.Render(site)
+		if err != nil {
+			logger.Fatalf("ERROR! Unable to render post file: %v", err)
+		}
+		files.WriteFile(filePath, content)
+		logger.Printf("Wrote file for: %v", post.Path)
+	}
 }
 
 var buildCommand = &cobra.Command{
