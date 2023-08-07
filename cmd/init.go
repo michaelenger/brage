@@ -35,7 +35,8 @@ const EXTRA_TEMPLATE = `<ul>
 </ul>
 `
 
-const FIRST_TEMPLATE = `title: First Post
+const FIRST_TEMPLATE = `---
+title: First Post
 date: 2023-07-21
 ---
 This is my **first** post!
@@ -96,7 +97,7 @@ func runInitCommand(cmd *cobra.Command, args []string) {
 		"assets/style.css":     STYLE_TEMPLATE,
 		"pages/index.html":     INDEX_TEMPLATE,
 		"pages/about.markdown": ABOUT_TEMPLATE,
-		"posts/first.html":     FIRST_TEMPLATE,
+		"posts/first.markdown": FIRST_TEMPLATE,
 		"partials/extra.html":  EXTRA_TEMPLATE,
 	}
 
