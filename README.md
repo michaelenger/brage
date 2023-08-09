@@ -222,9 +222,11 @@ GOARCH=amd64 GOOS=linux go build
 ## TODO
 
 * Generate an RSS/Atom file.
+* Add support for a post description and image (for meta tags).
 * Provide lists of top 5/10 posts (or use a lambda?)
 * Add word count and reading time to the posts.
 * Warn when a post is going to override another one.
 * Allow for customizing the posts prefix.
 * Support tags for posts?
 * Hide posts with dates in the future.
+* Add filters/lambdas to make working with Mustache a bit better (date formatter, list limiter, etc.)
