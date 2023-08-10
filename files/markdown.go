@@ -5,6 +5,7 @@ import (
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-meta"
+	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 )
 
@@ -13,6 +14,7 @@ func ParseMarkdown(text []byte) (map[string]interface{}, string) {
 	markdown := goldmark.New(
 		goldmark.WithExtensions(
 			meta.Meta,
+			extension.Strikethrough,
 		),
 	)
 
@@ -27,7 +29,11 @@ func ParseMarkdown(text []byte) (map[string]interface{}, string) {
 
 // Render markdown to HTML.
 func RenderMarkdown(text []byte) string {
-	markdown := goldmark.New()
+	markdown := goldmark.New(
+		goldmark.WithExtensions(
+			extension.Strikethrough,
+		),
+	)
 
 	var buf bytes.Buffer
 	context := parser.NewContext()
