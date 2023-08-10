@@ -317,9 +317,9 @@ func TestMakeContext(t *testing.T) {
 		},
 		"posts": []map[string]string{
 			{
-				"path": "/blog/first-post",
+				"path":  "/blog/first-post",
 				"title": "First Post",
-				"date": "2010-09-08",
+				"date":  "2010-09-08",
 			},
 		},
 	}

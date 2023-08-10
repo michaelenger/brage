@@ -187,9 +187,9 @@ func (site Site) MakeContext() map[string]interface{} {
 	posts := make([]map[string]string, len(site.Posts))
 	for i := range site.Posts {
 		posts[i] = map[string]string{
-			"path": site.Posts[i].Path,
+			"path":  site.Posts[i].Path,
 			"title": site.Posts[i].Title,
-			"date": site.Posts[i].Date.Format("2006-01-02"),
+			"date":  site.Posts[i].Date.Format("2006-01-02"),
 		}
 	}
 

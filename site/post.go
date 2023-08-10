@@ -21,13 +21,13 @@ type Post struct {
 type byPostDate []Post
 
 func (s byPostDate) Len() int {
-    return len(s)
+	return len(s)
 }
 func (s byPostDate) Swap(i, j int) {
-    s[i], s[j] = s[j], s[i]
+	s[i], s[j] = s[j], s[i]
 }
 func (s byPostDate) Less(i, j int) bool {
-    return s[i].Date.Before(s[j].Date)
+	return s[i].Date.Before(s[j].Date)
 }
 
 // Make a post out the given File.
