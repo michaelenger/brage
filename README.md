@@ -171,11 +171,11 @@ Pages are built based on template files in a `pages` subdirectory and need to ha
 
 ### Posts
 
-Posts (similar to pages) are in template files in a `posts` subdirectory and can be both HTML or Markdown, defined by their file extension. The URI for the post is also on its file name, but ignores any subdirectories and gets the `/blog` prefix. Note that there is nothing stopping you from creating two posts which override each other.
+Posts (similar to pages) are in template files in a `posts` subdirectory and can be both HTML or Markdown, defined by their file extension. The URI for the post is also on its file name so note that there is nothing stopping you from creating a post and a page which override each other.
 
-* `/posts/first-post.markdown` => `/blog/first-post`
-* `/posts/sub/this-is-a-subdir.markdown` => `/blog/this-is-a-subdir`
-* `/posts/sub/sub/post.html` => `/blog/post`
+* `/posts/first-post.markdown` => `/first-post`
+* `/posts/blog/this-is-a-subdir.markdown` => `/blog/this-is-a-subdir`
+* `/posts/blog/sub/post.html` => `/blog/sub/post`
 
 #### Post Metadata
 

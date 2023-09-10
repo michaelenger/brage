@@ -2,7 +2,6 @@ package site
 
 import (
 	"log"
-	"path"
 	"time"
 
 	"brage/files"
@@ -31,7 +30,7 @@ func (s byPostDate) Less(i, j int) bool {
 }
 
 // Make a post out the given File.
-func MakePost(file files.File, pathPrefix string) Post {
+func MakePost(file files.File, pathName string) Post {
 	var content string
 	var metadata map[string]interface{}
 	switch file.Type {
@@ -58,7 +57,7 @@ func MakePost(file files.File, pathPrefix string) Post {
 	}
 
 	return Post{
-		path.Join(pathPrefix, files.FileName(file.Path)),
+		pathName,
 		title,
 		publishedDate,
 		content,

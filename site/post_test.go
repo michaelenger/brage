@@ -29,7 +29,7 @@ This is just a test.`),
 		"<p>This is just a test.</p>\n",
 	}
 
-	result := MakePost(file, "/blog")
+	result := MakePost(file, "/blog/test")
 
 	if !reflect.DeepEqual(result, expected) {
 		t.Fatalf("Received:\n%+v\nExpected:\n%+v", result, expected)
@@ -49,7 +49,7 @@ func TestMakePostDefaultMetadata(t *testing.T) {
 		"<p>This is a test</p>\n",
 	}
 
-	result := MakePost(file, "/blog")
+	result := MakePost(file, "/blog/some-test")
 
 	result.Date = expected.Date // we'll be milliseconds off, so no point in checking
 
@@ -71,7 +71,7 @@ func TestMakePostHtmlFile(t *testing.T) {
 		"This is a test",
 	}
 
-	result := MakePost(file, "/")
+	result := MakePost(file, "/another-test")
 
 	result.Date = expected.Date // we'll be milliseconds off, so no point in checking
 

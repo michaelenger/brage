@@ -73,8 +73,8 @@ func loadPosts(dirPath string) []Post {
 	}
 
 	postFiles, err := files.ReadFiles(dirPath, "")
-	for _, file := range postFiles {
-		posts = append(posts, MakePost(file, "/blog"))
+	for name, file := range postFiles {
+		posts = append(posts, MakePost(file, fmt.Sprintf("/%s", name)))
 	}
 
 	return posts
