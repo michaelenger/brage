@@ -45,7 +45,7 @@ brage build [PATH]
 
 #### Options
 
-* `-o, --output` Path to output the site to
+* `-o, --output path` Path to output the site to
 * `-c, --clean` Override the output assets directory, removing anything already in there
 
 ## Building Sites
@@ -95,7 +95,7 @@ Contains site data as defined in the `config.yaml` file:
 Contains information about the current page:
 
 * `page.path` Path to the page
-* `page.template` Contents of the page template
+* `page.template` Contents of the page template file
 * `page.title` Automatically inferred title based on the path
 
 The title for the root path is `"Home"`
@@ -104,10 +104,10 @@ The title for the root path is `"Home"`
 
 Contains information about the current post:
 
-* `page.path` Path to the page
-* `page.template` Contents of the page template
-* `page.title` Automatically inferred title based on the path
-* `page.date` Date of the post (as specified in the metadata)
+* `post.path` Path to the post
+* `post.template` Contents of the post template file
+* `post.title` Title of the post, either from the front matter or inferred based on the path
+* `post.date` Date of the post (as specified in the metadata)
 
 ##### Data
 
@@ -226,7 +226,6 @@ GOARCH=amd64 GOOS=linux go build
 * Provide lists of top 5/10 posts (or use a lambda?)
 * Add word count and reading time to the posts.
 * Warn when a post is going to override another one.
-* Allow for customizing the posts prefix.
 * Support tags for posts?
 * Hide posts with dates in the future.
 * Add filters/lambdas to make working with Mustache a bit better (date formatter, list limiter, etc.)
