@@ -6,7 +6,7 @@ import (
 	"path"
 	"sort"
 
-	"brage/files"
+	"github.com/michaelenger/brage/files"
 	"gopkg.in/yaml.v2"
 )
 

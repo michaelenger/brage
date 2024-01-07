@@ -1,8 +1,8 @@
 package site
 
 import (
-	"brage/files"
 	"github.com/cbroglie/mustache"
+	"github.com/michaelenger/brage/files"
 )
 
 type Page struct {

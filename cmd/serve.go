@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"brage/files"
-	"brage/site"
+	"github.com/michaelenger/brage/files"
+	"github.com/michaelenger/brage/site"
 	"github.com/spf13/cobra"
 )
 

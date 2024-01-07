@@ -1,7 +1,7 @@
 package main
 
 import (
-	"brage/cmd"
+	"github.com/michaelenger/brage/cmd"
 	"log"
 )
 

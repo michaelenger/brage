@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"brage/files"
+	"github.com/michaelenger/brage/files"
 	"github.com/spf13/cobra"
 )
 

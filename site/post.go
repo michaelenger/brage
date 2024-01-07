@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	"brage/files"
 	"github.com/cbroglie/mustache"
+	"github.com/michaelenger/brage/files"
 )
 
 // A blog post.

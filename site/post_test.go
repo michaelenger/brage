@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"brage/files"
+	"github.com/michaelenger/brage/files"
 )
 
 func TestMakePost(t *testing.T) {
