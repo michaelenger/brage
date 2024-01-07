@@ -1,6 +1,6 @@
 module brage
 
-go 1.17
+go 1.21.5
 
 require (
 	github.com/spf13/cobra v1.7.0
