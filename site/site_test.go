@@ -302,6 +302,7 @@ func TestMakeContext(t *testing.T) {
 			{
 				"/blog/first-post",
 				"First Post",
+				"",
 				date,
 				"This is a test",
 			},

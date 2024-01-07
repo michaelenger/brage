@@ -107,6 +107,7 @@ Contains information about the current post:
 * `post.path` Path to the post
 * `post.template` Contents of the post template file
 * `post.title` Title of the post, either from the front matter or inferred based on the path
+* `post.description` Description of the post, taken from the front matter
 * `post.date` Date of the post (as specified in the metadata)
 
 ##### Data
@@ -222,7 +223,7 @@ GOARCH=amd64 GOOS=linux go build
 ## TODO
 
 * Generate an RSS/Atom file.
-* Add support for a post description and image (for meta tags).
+* Add support for a post image (for meta tags).
 * Provide lists of top 5/10 posts (or use a lambda?)
 * Add word count and reading time to the posts.
 * Warn when a post is going to override another one.
