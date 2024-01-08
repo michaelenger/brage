@@ -12,6 +12,7 @@ var exampleConfig = `
 title: Young Fatigue
 description: New Single ‘Dislocation‘ Out Now!
 image: icon.png
+author: Young Fatigue
 root_url: https://youngfatigue.com/
 redirects:
   /example: https://example.org/
@@ -171,6 +172,9 @@ func TestLoad(t *testing.T) {
 	if site.Config.Image != "icon.png" {
 		t.Fatalf("Incorrect site.Config.Image: %v", site.Config.Image)
 	}
+	if site.Config.Author != "Young Fatigue" {
+		t.Fatalf("Incorrect site.Config.Author: %v", site.Config.Author)
+	}
 	if site.Config.RootUrl != "https://youngfatigue.com/" {
 		t.Fatalf("Incorrect site.Config.RootUrl: %v", site.Config.RootUrl)
 	}
@@ -281,6 +285,7 @@ func TestMakeContext(t *testing.T) {
 			"Title",
 			"Description",
 			"image.png",
+			"Person McPersonface",
 			"https://example.org",
 			map[string]string{
 				"redirect": "https://google.com",
@@ -312,6 +317,7 @@ func TestMakeContext(t *testing.T) {
 		"title":       "Title",
 		"description": "Description",
 		"image":       "image.png",
+		"author":      "Person McPersonface",
 		"root_url":    "https://example.org",
 		"redirects": map[string]string{
 			"redirect": "https://google.com",

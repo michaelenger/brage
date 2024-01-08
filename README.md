@@ -59,6 +59,7 @@ The config for a site is specified in a `config.yaml` file in the site's directo
 * `title` The site title
 * `description` Site description
 * `image` Favicon
+* `author` The author of the website, used when generating feeds
 * `root_url` The root URL of the site
 * `redirects` Map of URIs that should redirect to other URLs
 * `data` A map containing any optional data you want to use in the templates
@@ -86,6 +87,7 @@ Contains site data as defined in the `config.yaml` file:
 * `site.title` Site title
 * `site.description` Site description
 * `site.image` Favicon/social media image
+* `site.author` The site author
 * `site.root_url` Root URL
 * `site.redirects` Redirect map
 * `site.posts` A list of all available posts (with their respective `path`, `title`, and `date`s)

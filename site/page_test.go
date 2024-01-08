@@ -10,6 +10,7 @@ var testConfig = SiteConfig{
 	"Test Site",
 	"This is just a test.",
 	"test.jpg",
+	"Person McPersonface",
 	"https://example.org/",
 	map[string]string{
 		"/example": "https://example.org/",

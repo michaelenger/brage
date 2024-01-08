@@ -25,6 +25,7 @@ type SiteConfig struct {
 	Title       string
 	Description string
 	Image       string
+	Author      string
 	RootUrl     string `yaml:"root_url"`
 	Redirects   map[string]string
 	Data        DataMap
@@ -197,6 +198,7 @@ func (site Site) MakeContext() map[string]interface{} {
 		"title":       site.Config.Title,
 		"description": site.Config.Description,
 		"image":       site.Config.Image,
+		"author":      site.Config.Author,
 		"root_url":    site.Config.RootUrl,
 		"redirects":   site.Config.Redirects,
 		"posts":       posts,
