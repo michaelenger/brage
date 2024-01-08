@@ -17,6 +17,7 @@ const ABOUT_TEMPLATE = `This is the about page.
 const CONFIG_TEMPLATE = `title: My Site
 description: This is my Brage site.
 image: dog.png
+author: Person McPersonface
 root_url: https://example.org
 redirects:
   /example: https://example.org/
