@@ -214,6 +214,10 @@ This is in the page.
 
 Assets are files in the `assets` subdirectory and are copied directly to an `assets` subdirectory in the target path when building the site.
 
+### RSS Feed
+
+If there are any posts in the site, it will generate a feed.rss file alongside the main index file which contains an RSS feed for all the posts.
+
 ## Building
 
 To build a binary that can work as a part of a GitHub Actions pipeline you need to run the following command:
@@ -224,7 +228,6 @@ GOARCH=amd64 GOOS=linux go build
 
 ## TODO
 
-* Generate an RSS/Atom file.
 * Add support for a post image (for meta tags).
 * Provide lists of top 5/10 posts (or use a lambda?)
 * Add word count and reading time to the posts.

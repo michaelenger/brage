@@ -3,9 +3,11 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"path"
 
+	"github.com/gorilla/feeds"
 	"github.com/michaelenger/brage/files"
 	"github.com/michaelenger/brage/site"
 	"github.com/spf13/cobra"
@@ -35,7 +37,7 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 
 	logger.Printf("Loading site from: %v", sourcePath)
 
-	site, err := site.Load(sourcePath)
+	siteData, err := site.Load(sourcePath)
 	if err != nil {
 		logger.Fatalf("ERROR! Unable to load site: %v", err)
 	}
@@ -58,7 +60,7 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 		logger.Printf("Copied %v assets", assets)
 	}
 
-	for uri, targetUrl := range site.Config.Redirects {
+	for uri, targetUrl := range siteData.Config.Redirects {
 		filePath := path.Join(destinationPath, uri, "index.html")
 
 		content := fmt.Sprintf(`<!DOCTYPE html>
@@ -79,9 +81,10 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 		logger.Printf("Added redirect: %v => %v", uri, targetUrl)
 	}
 
-	for _, page := range site.Pages {
+	logger.Printf("Found %d pages...", len(siteData.Pages))
+	for _, page := range siteData.Pages {
 		filePath := path.Join(destinationPath, page.Path, "index.html")
-		content, err := page.Render(site)
+		content, err := page.Render(siteData)
 		if err != nil {
 			logger.Fatalf("ERROR! Unable to render page file: %v", err)
 		}
@@ -89,14 +92,63 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 		logger.Printf("Wrote file for: %v", page.Path)
 	}
 
-	for _, post := range site.Posts {
+	logger.Printf("Found %d posts...", len(siteData.Posts))
+	for _, post := range siteData.Posts {
 		filePath := path.Join(destinationPath, post.Path, "index.html")
-		content, err := post.Render(site)
+		content, err := post.Render(siteData)
 		if err != nil {
 			logger.Fatalf("ERROR! Unable to render post file: %v", err)
 		}
 		files.WriteFile(filePath, content)
 		logger.Printf("Wrote file for: %v", post.Path)
+	}
+
+	if len(siteData.Posts) > 0 {
+		author := &feeds.Author{Name: siteData.Config.Author}
+
+		feed := &feeds.Feed{
+			Title:       siteData.Config.Title,
+			Link:        &feeds.Link{Href: siteData.Config.RootUrl},
+			Description: siteData.Config.Description,
+			Author:      author,
+			Created:     siteData.Posts[len(siteData.Posts)-1].Date,
+			Updated:     siteData.Posts[0].Date,
+		}
+		if siteData.Config.Image != "" {
+			imageUrl, err := url.JoinPath(siteData.Config.RootUrl, "assets", siteData.Config.Image)
+			if err != nil {
+				logger.Fatalf("ERROR! Unable to create post URL: %v", err)
+			}
+			feed.Image = &feeds.Image{
+				Url:   imageUrl,
+				Title: siteData.Config.Title,
+				Link:  siteData.Config.RootUrl,
+			}
+		}
+
+		var feedItems []*feeds.Item
+		for _, post := range siteData.Posts {
+			postUrl, err := url.JoinPath(siteData.Config.RootUrl, post.Path)
+			if err != nil {
+				logger.Fatalf("ERROR! Unable to create post URL: %v", err)
+			}
+			feedItems = append(feedItems, &feeds.Item{
+				Title:       post.Title,
+				Link:        &feeds.Link{Href: postUrl},
+				Description: post.Description,
+				Author:      author,
+				Created:     post.Date,
+			})
+		}
+		feed.Items = feedItems
+
+		filePath := path.Join(destinationPath, "feed.rss")
+		content, err := feed.ToRss()
+		if err != nil {
+			logger.Fatalf("ERROR! Unable to generate RSS feed: %v", err)
+		}
+		files.WriteFile(filePath, content)
+		logger.Print("Wrote RSS file: feed.rss")
 	}
 }
 
