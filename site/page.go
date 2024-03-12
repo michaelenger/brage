@@ -13,9 +13,10 @@ type Page struct {
 // Create the context used when rendering a page.
 func (page Page) makeContext(site Site) map[string]interface{} {
 	pageContext := map[string]string{
-		"path":     page.Path,
-		"template": page.Template,
-		"title":    files.PathToTitle(page.Path),
+		"path":       page.Path,
+		"template":   page.Template,
+		"title":      files.PathToTitle(page.Path),
+		"identifier": files.PathToIdentifier(page.Path),
 	}
 
 	return map[string]interface{}{

@@ -7,6 +7,24 @@ import (
 	"testing"
 )
 
+func TestPathToIdentifier(t *testing.T) {
+	var tests map[string]string = map[string]string{
+		"/":               "index",
+		"/about":          "about",
+		"/this is a test": "this-is-a-test",
+		"/one/two/three":  "one-two-three",
+	}
+
+	var result string
+
+	for filePath, expected := range tests {
+		result = PathToIdentifier(filePath)
+		if result != expected {
+			t.Fatalf("Result:\n%v\nExpected:\n%v", result, expected)
+		}
+	}
+}
+
 func TestPathToTitle(t *testing.T) {
 	var tests map[string]string = map[string]string{
 		"/":               "Home",

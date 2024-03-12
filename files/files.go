@@ -121,6 +121,18 @@ func FileName(filePath string) string {
 	return base[:len(base)-len(extension)]
 }
 
+// Convert a path into a page/post ID.
+func PathToIdentifier(filePath string) string {
+	if filePath == "/" {
+		return "index"
+	}
+
+	return strings.ToLower(
+		strings.ReplaceAll(
+			strings.ReplaceAll(filePath[1:], " ", "-"),
+			"/", "-"))
+}
+
 // Convert a path into a page/post title.
 func PathToTitle(filePath string) string {
 	if filePath == "/" {

@@ -99,6 +99,7 @@ Contains information about the current page:
 * `page.path` Path to the page
 * `page.template` Contents of the page template file
 * `page.title` Automatically inferred title based on the path
+* `page.identifier` The path converted to a unique identifier
 
 The title for the root path is `"Home"`
 
