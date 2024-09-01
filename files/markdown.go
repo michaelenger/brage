@@ -7,6 +7,7 @@ import (
 	"github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer/html"
 )
 
 // Parse markdown, rendering it to HTML and returning the metadata as a map.
@@ -15,6 +16,9 @@ func ParseMarkdown(text []byte) (map[string]interface{}, string) {
 		goldmark.WithExtensions(
 			meta.Meta,
 			extension.Strikethrough,
+		),
+		goldmark.WithRendererOptions(
+			html.WithUnsafe(),
 		),
 	)
 
