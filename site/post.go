@@ -106,3 +106,12 @@ func (post Post) Render(site Site) (string, error) {
 
 	return mustache.RenderInLayoutPartials(post.Template, site.Layouts[PostLayout], partialsProvider, context)
 }
+
+// Render a post using a specific site config but without the layout file.
+func (post Post) RenderTemplate(site Site) (string, error) {
+	context := post.makeContext(site)
+
+	partialsProvider := &mustache.StaticProvider{site.Partials}
+
+	return mustache.RenderInLayoutPartials(post.Template, "{{{ content }}}", partialsProvider, context)
+}

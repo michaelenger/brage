@@ -190,3 +190,70 @@ func TestPostRender(t *testing.T) {
 		t.Fatalf("Result:\n%v\nExpected:\n%v", result, expected)
 	}
 }
+
+func TestPostRenderTemplate(t *testing.T) {
+	var whitespacePattern = regexp.MustCompile(`\s`)
+
+	temporaryDirectory, err := os.MkdirTemp("", "examplesite")
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	date, _ := time.Parse(time.DateOnly, "2010-09-08")
+
+	post := Post{
+		"/example",
+		"This is a post",
+		"Just a description.",
+		"",
+		date,
+		`<h1>{{ post.title }}</h1>
+		<h2>{{ post.date }}</h2>
+		{{ #data.skills }}
+			<p>{{ . }}</p>
+		{{ /data.skills }}
+
+		{{> temp }}`,
+	}
+
+	expected := `<h1>This is a post</h1>
+		<h2>2010-09-08</h2>
+
+			<p>one</p>
+
+			<p>two</p>
+
+			<p>three</p>
+
+			<em>This is from a template</em>`
+
+	site := Site{
+		testConfig,
+		temporaryDirectory,
+		map[LayoutType]string{
+			PostLayout: `<head>
+				<title>{{ site.title }}</title>
+			</head>
+			<body>
+				{{{ content }}}
+			</body>`,
+		},
+		[]Page{},
+		map[string]string{
+			"temp": `<em>This is from a template</em>`,
+		},
+		[]Post{},
+	}
+
+	result, err := post.RenderTemplate(site)
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	result = whitespacePattern.ReplaceAllString(result, "")
+	expected = whitespacePattern.ReplaceAllString(expected, "")
+
+	if result != expected {
+		t.Fatalf("Result:\n%v\nExpected:\n%v", result, expected)
+	}
+}
