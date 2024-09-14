@@ -193,7 +193,7 @@ date: 2009-08-07
 This is the actual post.
 ```
 
-Dates must be defined in the `YYYY-MM-DD` format and the list of posts will be sorted to show the latest ones first.
+Dates must be defined in either the `YYYY-MM-DD` or `YYYY-MM-DD hh:mm:ss` format and the list of posts will be sorted to show the latest ones first.
 
 ### Partials
 

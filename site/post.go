@@ -53,10 +53,13 @@ func MakePost(file files.File, pathName string) Post {
 
 	publishedDate := time.Now()
 	if val, ok := metadata["date"]; ok {
-		parsedTime, err := time.Parse("2006-01-02", val.(string))
+		parsedTime, err := time.Parse(time.DateTime, val.(string))
 		if err != nil {
-			logger := log.Default()
-			logger.Printf("Unable to parse published date: %v", val)
+			parsedTime, err = time.Parse(time.DateOnly, val.(string))
+			if err != nil {
+				logger := log.Default()
+				logger.Printf("Unable to parse published date: %v", val)
+			}
 		}
 
 		publishedDate = parsedTime

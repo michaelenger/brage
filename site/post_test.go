@@ -38,6 +38,34 @@ This is just a test.`),
 	}
 }
 
+func TestMakePostWithDateTime(t *testing.T) {
+	file := files.File{
+		files.MarkdownFile,
+		"/tmp/test.md",
+		[]byte(`---
+title: Testing!
+description: I am described.
+date: 2020-10-01 12:13:14
+---
+
+This is just a test.`),
+	}
+	expectedTime, _ := time.Parse(time.DateTime, "2020-10-01 12:13:14")
+	expected := Post{
+		"/blog/test",
+		"Testing!",
+		"I am described.",
+		expectedTime,
+		"<p>This is just a test.</p>\n",
+	}
+
+	result := MakePost(file, "/blog/test")
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Fatalf("Received:\n%+v\nExpected:\n%+v", result, expected)
+	}
+}
+
 func TestMakePostDefaultMetadata(t *testing.T) {
 	file := files.File{
 		files.MarkdownFile,
@@ -92,7 +120,7 @@ func TestPostRender(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 
-	date, _ := time.Parse("2006-01-02", "2010-09-08")
+	date, _ := time.Parse(time.DateOnly, "2010-09-08")
 
 	post := Post{
 		"/example",
