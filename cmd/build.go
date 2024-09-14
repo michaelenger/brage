@@ -132,12 +132,14 @@ func runBuildCommand(cmd *cobra.Command, args []string) {
 			if err != nil {
 				logger.Fatalf("ERROR! Unable to create post URL: %v", err)
 			}
+			content, _ := post.RenderTemplate(siteData)
 			feedItems = append(feedItems, &feeds.Item{
 				Title:       post.Title,
 				Link:        &feeds.Link{Href: postUrl},
 				Description: post.Description,
 				Author:      author,
 				Created:     post.Date,
+				Content:     content,
 			})
 		}
 		feed.Items = feedItems
