@@ -111,6 +111,7 @@ Contains information about the current post:
 * `post.template` Contents of the post template file
 * `post.title` Title of the post, either from the front matter or inferred based on the path
 * `post.description` Description of the post, taken from the front matter
+* `post.image` URL to an image associated with the post
 * `post.date` Date of the post (as specified in the metadata)
 
 ##### Data
@@ -229,7 +230,6 @@ GOARCH=amd64 GOOS=linux go build
 
 ## TODO
 
-* Add support for a post image (for meta tags).
 * Provide lists of top 5/10 posts (or use a lambda?)
 * Add word count and reading time to the posts.
 * Warn when a post is going to override another one.

@@ -17,6 +17,7 @@ func TestMakePost(t *testing.T) {
 		[]byte(`---
 title: Testing!
 description: I am described.
+image: foo.png
 date: 2020-10-01
 ---
 
@@ -27,6 +28,7 @@ This is just a test.`),
 		"/blog/test",
 		"Testing!",
 		"I am described.",
+		"foo.png",
 		expectedTime,
 		"<p>This is just a test.</p>\n",
 	}
@@ -45,6 +47,7 @@ func TestMakePostWithDateTime(t *testing.T) {
 		[]byte(`---
 title: Testing!
 description: I am described.
+image: foo.png
 date: 2020-10-01 12:13:14
 ---
 
@@ -55,6 +58,7 @@ This is just a test.`),
 		"/blog/test",
 		"Testing!",
 		"I am described.",
+		"foo.png",
 		expectedTime,
 		"<p>This is just a test.</p>\n",
 	}
@@ -75,6 +79,7 @@ func TestMakePostDefaultMetadata(t *testing.T) {
 	expected := Post{
 		"/blog/some-test",
 		"Some Test",
+		"",
 		"",
 		time.Now(),
 		"<p>This is a test</p>\n",
@@ -98,6 +103,7 @@ func TestMakePostHtmlFile(t *testing.T) {
 	expected := Post{
 		"/another-test",
 		"Another Test",
+		"",
 		"",
 		time.Now(),
 		"This is a test",
@@ -126,6 +132,7 @@ func TestPostRender(t *testing.T) {
 		"/example",
 		"This is a post",
 		"Just a description.",
+		"",
 		date,
 		`<h1>{{ post.title }}</h1>
 		<h2>{{ post.date }}</h2>

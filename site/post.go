@@ -13,6 +13,7 @@ type Post struct {
 	Path        string
 	Title       string
 	Description string
+	Image       string
 	Date        time.Time
 	Template    string
 }
@@ -51,6 +52,11 @@ func MakePost(file files.File, pathName string) Post {
 		description = val.(string)
 	}
 
+	image := ""
+	if val, ok := metadata["image"]; ok {
+		image = val.(string)
+	}
+
 	publishedDate := time.Now()
 	if val, ok := metadata["date"]; ok {
 		parsedTime, err := time.Parse(time.DateTime, val.(string))
@@ -69,6 +75,7 @@ func MakePost(file files.File, pathName string) Post {
 		pathName,
 		title,
 		description,
+		image,
 		publishedDate,
 		content,
 	}
